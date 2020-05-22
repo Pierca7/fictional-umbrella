@@ -19,7 +19,7 @@
     },
     "homepage": "https://github.com/Pierca7/fictional-umbrella#readme",
     "lint-staged": {
-        ".ts": [
+        "*.ts": [
             "eslint --fix",
             "prettier --config prettier.config.js --loglevel silent --write"
         ]
