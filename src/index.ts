@@ -1,3 +1,6 @@
-const helloWorld = () => console.log("Hello world");
+const helloWorld =
+ () => console
+ .log("Hello world");
 
-export default helloWorld;
+export default
+ helloWorld;
