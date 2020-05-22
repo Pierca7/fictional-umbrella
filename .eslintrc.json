@@ -1,6 +1,17 @@
 {
-    "extends": [
-        "@spotify/eslint-config-base",
-        "@spotify/eslint-config-typescript"
-    ]
+  "root": true,
+  "extends": [
+    "@spotify/eslint-config-base",
+    "@spotify/eslint-config-typescript"
+  ],
+  "rules": {
+    "quotes": [
+      "error",
+      "double",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
+    "@typescript-eslint/camelcase": "off"  
+  }
 }
