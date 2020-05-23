@@ -12,6 +12,11 @@
         "allowTemplateLiterals": true
       }
     ],
-    "@typescript-eslint/camelcase": "off"  
+    "@typescript-eslint/camelcase": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
   }
 }

@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
+import "regenerator-runtime/runtime.js";
 import { Client } from "discord.js";
-import config from "../../config";
-import waitForCommands from "./commands";
+import config from "./config";
+import waitForCommands from "bot/commands";
 
 const { token } = config;
 

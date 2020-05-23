@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import configuration from "../configuration/configuration";
+import configuration from "bot/configuration";
 import { Message, Client } from "discord.js";
 
 const isCommand = (message: Message): boolean =>
-  message.content.startsWith(configuration.preffix);
+  ((message || {}).content || "").startsWith(configuration.preffix);
 
 const waitForCommands = (client: Client) => {
   client.on("message", async message => {
