@@ -31,7 +31,10 @@
     "dependencies": {
         "@discordjs/opus": "^0.3.2",
         "discord.js": "^12.2.0",
-        "ffmpeg-static": "^4.2.2"
+        "ffmpeg": "^0.0.4",
+        "ffmpeg-static": "^4.2.2",
+        "fluent-ffmpeg": "^2.1.2",
+        "ytdl-core": "^2.1.4"
     },
     "devDependencies": {
         "@spotify/eslint-config-base": "^7.0.0",
