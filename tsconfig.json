@@ -1,36 +1,23 @@
 {
-    "compilerOptions": {
-        "allowJs":true ,
-        "declaration": false,
-        "experimentalDecorators": false,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "importHelpers": false,
-        "isolatedModules": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "noEmit": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "pretty": true,
-        "removeComments": true,
-        "resolveJsonModule": true,
-        "strict": true,
-        "strictBindCallApply": true,
-        "strictFunctionTypes": true,
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-        "stripInternal": true,
-        "outDir": "./lib"
-    },
-    "include": [
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+  "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "allowJs": true,
+      "allowSyntheticDefaultImports": true,
+      "target": "es6",
+      "noImplicitAny": true,
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "outDir": "lib",
+      "baseUrl": ".",
+      "paths": {
+          "*": [
+              "node_modules/*",
+              "src/types/*"
+          ]
+      }
+  },
+  "include": [
+      "src/**/*"
+  ]
 }

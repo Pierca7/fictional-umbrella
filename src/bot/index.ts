@@ -1,11 +1,8 @@
-import * as Commando from "discord.js-commando";
+import { Client } from "discord.js";
 import config from "../../config";
 
-const { owner, token } = config;
+const { token } = config;
 
-const client = new Commando.CommandoClient({
-  commandPrefix: "--",
-  owner: owner,
-});
+const client = new Client();
 
 client.login(token);
