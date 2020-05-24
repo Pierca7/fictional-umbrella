@@ -2,10 +2,12 @@
 import { Message } from "discord.js";
 import { joinVoiceChannel } from "bot/helpers/join-channel";
 import path from "path";
+import WakewordClient from "bot/helpers/wakeword";
 
 const hear = async (message: Message): Promise<void> => {
   try {
     const connection = await joinVoiceChannel(message);
+    const wakewordClient = new WakewordClient();
 
     // We need to play a sound to be able to receive voice data.
     connection.play(
@@ -20,7 +22,8 @@ const hear = async (message: Message): Promise<void> => {
       end: "manual",
     });
 
-    stream.on("data", chunk => console.log(chunk));
+    stream.on("data", chunk => wakewordClient.process(chunk));
+    wakewordClient.onData(data => console.log(data.toString()));
   } catch (error) {
     console.error(error);
   }
