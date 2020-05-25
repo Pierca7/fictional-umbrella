@@ -8,6 +8,8 @@ import pyaudio
 import soundfile
 import pvporcupine
 import io
+from vosk import Model, KaldiRecognizer
+
 
 def main():
   keywordsPath = os.getcwd() + "\\src\\voice-client\\wakewords\\"
@@ -18,12 +20,26 @@ def main():
 
   while True:
     audio = sys.stdin.buffer.read(1024)                
-    audio = struct.unpack_from("h" * porcupine.frame_length, audio)
-    result = porcupine.process(audio)
+    unpackedAudio = struct.unpack_from("h" * porcupine.frame_length, audio)
+    result = porcupine.process(unpackedAudio)
 
     if result:
       sys.stdout.write("Keyword detected")
-      sys.stdout.flush()
+      model = Model("model")
+      rec = KaldiRecognizer(model, 16000)
+
+      while True:
+          audio = sys.stdin.buffer.read(4000)                
+          if len(audio) == 0:
+            break
+          if rec.AcceptWaveform(audio):
+              print(rec.Result())
+          else:
+              rec.PartialResult()
+          sys.stdout.flush()
+
+
+
 
 
 # Add Porcupine's library paths into path
