@@ -1,5 +1,9 @@
+## Folders
 node_modules
 lib
+.vscode
+model
+
+## Files
 yarn-error.log
 config.js
-.vscode
