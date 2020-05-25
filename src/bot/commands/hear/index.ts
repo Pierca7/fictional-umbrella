@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Message, VoiceReceiver, UserResolvable, Speaking } from "discord.js";
+import { Message, VoiceReceiver, UserResolvable } from "discord.js";
 import { joinVoiceChannel } from "bot/helpers/join-channel";
 import path from "path";
 import ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
