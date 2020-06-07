@@ -2,9 +2,11 @@
 import configuration from "bot/configuration";
 import { Message, Client } from "discord.js";
 import hear from "commands/hear";
+import deaf from "commands/deaf";
 
 enum Commands {
   Hear = "hear",
+  Deaf = "deaf",
 }
 
 const isCommand = (message: Message): boolean =>
@@ -21,6 +23,10 @@ const executeCommand = async (message: Message): Promise<void> => {
       return;
     case Commands.Hear:
       hear(message);
+      break;
+    case Commands.Deaf:
+      deaf(message);
+      break;
   }
 };
 
