@@ -41,7 +41,7 @@
     "pcm-convert": "^1.6.5",
     "regenerator-runtime": "^0.13.5",
     "websocket-stream": "^5.5.2",
-    "ytdl-core": "^2.1.4"
+    "ytdl-core": "^2.1.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

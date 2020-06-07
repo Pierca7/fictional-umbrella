@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Message, VoiceReceiver, UserResolvable } from "discord.js";
+import { Message } from "discord.js";
 import { joinVoiceChannel } from "bot/helpers/join-channel";
 import path from "path";
 import ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
@@ -7,6 +7,7 @@ import { WakewordClient } from "../../helpers/wakeword";
 import config from "../../config";
 import { Readable } from "stream";
 import WebSocketStream from "websocket-stream";
+import ytdl from "ytdl-core";
 
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -77,7 +78,14 @@ const hear = async (message: Message): Promise<void> => {
             return;
           }
 
-          console.log(result.text);
+          message.reply(`Searching for ${result.text}...`);
+
+          connection.play(
+            ytdl("https://www.youtube.com/watch?v=psuRGfAaju4", {
+              quality: "highestaudio",
+              filter: "audioonly",
+            }),
+          );
         });
 
       encodeVoskAudioStream(baseStream).pipe(ws);
