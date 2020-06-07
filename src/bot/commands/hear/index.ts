@@ -8,6 +8,7 @@ import config from "../../config";
 import { Readable } from "stream";
 import WebSocketStream from "websocket-stream";
 import ytdl from "ytdl-core";
+import axios from "axios";
 
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -57,7 +58,7 @@ const hear = async (message: Message): Promise<void> => {
     wakewordStream.pipe(wakewordClient.input);
 
     wakewordClient.on("keyword", data => {
-      console.log(`Keyword detected: ${data.toString()}`);
+      message.reply(`Keyword detected: ${data.toString()}`);
 
       baseStream.unpipe();
 
@@ -71,7 +72,7 @@ const hear = async (message: Message): Promise<void> => {
           if (err) throw err;
           console.log(`Closing ws`);
         })
-        .on("data", (wsData: any) => {
+        .on("data", async (wsData: any) => {
           const result = JSON.parse(wsData.toString());
 
           if (!result.text) {
@@ -80,12 +81,31 @@ const hear = async (message: Message): Promise<void> => {
 
           message.reply(`Searching for ${result.text}...`);
 
+          const videos = await axios.get(
+            "https://www.googleapis.com/youtube/v3/search",
+            {
+              params: {
+                key: config.ytkey,
+                part: "snippet",
+                order: "relevance",
+                q: result.text,
+                type: "video",
+              },
+            },
+          );
+
+          const video = videos.data.items[0];
+          const id = video.id.videoId;
+          const title = video.snippet.title;
+
           connection.play(
-            ytdl("https://www.youtube.com/watch?v=psuRGfAaju4", {
+            ytdl(`https://www.youtube.com/watch?v=${id}`, {
               quality: "highestaudio",
               filter: "audioonly",
             }),
           );
+
+          message.reply(`Playing ${title}`);
         });
 
       encodeVoskAudioStream(baseStream).pipe(ws);

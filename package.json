@@ -33,12 +33,11 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "bumblebee-hotword-node": "^0.0.5",
+    "axios": "^0.19.2",
     "discord.js": "^12.2.0",
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.2.2",
     "fluent-ffmpeg": "^2.1.2",
-    "pcm-convert": "^1.6.5",
     "regenerator-runtime": "^0.13.5",
     "websocket-stream": "^5.5.2",
     "ytdl-core": "^2.1.7"
