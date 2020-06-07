@@ -6,7 +6,8 @@
     "build": "rimraf ./lib && npm run build:types && npm run build:js",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
-    "start": "npm run build && node ./lib/src/bot/index.js"
+    "start": "npm run build && node ./lib/src/bot/index.js",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,8 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.2.2",
     "fluent-ffmpeg": "^2.1.2",
+    "patch-package": "^6.2.2",
+    "postinstall-postinstall": "^2.1.0",
     "regenerator-runtime": "^0.13.5",
     "websocket-stream": "^5.5.2",
     "ytdl-core": "^2.1.7"
