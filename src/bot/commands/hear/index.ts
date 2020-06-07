@@ -5,13 +5,11 @@ import path from "path";
 import ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
 import { WakewordClient } from "../../helpers/wakeword";
 import config from "../../config";
-import WebSocket from "ws";
 import { Readable } from "stream";
+import WebSocketStream from "websocket-stream";
 
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
-
-let flag: boolean = false;
 
 const encodePorcupineAudioStream = (baseStream: Readable): FfmpegCommand => {
   return ffmpeg(baseStream)
@@ -33,7 +31,8 @@ const encodeVoskAudioStream = (baseStream: Readable): FfmpegCommand => {
     .format("s16le");
 };
 
-export let ws: WebSocket;
+export let ws: WebSocketStream.WebSocketDuplex;
+export let baseStream: Readable;
 
 const hear = async (message: Message): Promise<void> => {
   try {
@@ -48,7 +47,7 @@ const hear = async (message: Message): Promise<void> => {
       },
     );
 
-    const baseStream = connection.receiver.createStream(message, {
+    baseStream = connection.receiver.createStream(message, {
       mode: "pcm",
       end: "manual",
     });
@@ -61,26 +60,29 @@ const hear = async (message: Message): Promise<void> => {
 
       baseStream.unpipe();
 
-      if (flag) {
-        return;
-      }
+      // eslint-disable-next-line new-cap
+      ws = WebSocketStream(config.ws);
 
-      const output = encodeVoskAudioStream(baseStream);
+      ws.on("error", (err: Error) => {
+        if (err) throw err;
+      })
+        .on("close", (err: Error) => {
+          if (err) throw err;
+          console.log(`Closing ws`);
+        })
+        .on("data", (wsData: any) => {
+          const result = JSON.parse(wsData.toString());
 
-      ws = new WebSocket(config.ws);
+          if (!result.text) {
+            return;
+          }
 
-      ws.on("open", function open() {
-        output.on("data", chunk => {
-          ws.send(chunk);
+          console.log(result.text);
         });
-      });
 
-      ws.on("message", function incoming(wsData) {
-        console.log(wsData);
-      });
-
-      flag = true;
+      encodeVoskAudioStream(baseStream).pipe(ws);
     });
+
     wakewordClient.on("error", data => console.log(data.toString()));
   } catch (error) {
     console.error(error);
