@@ -28,7 +28,6 @@ wakeword_model = Model(vosk_small_model_path)
 model = Model(vosk_model_path)
 pool = concurrent.futures.ThreadPoolExecutor()
 loop = asyncio.get_event_loop()
-wait_for_wakeword = True
 
 def process_chunk(rec, message):
     if rec.AcceptWaveform(message):
@@ -47,6 +46,7 @@ async def recognize(websocket, path):
     rec = None
     word_list = None
     sample_rate = 16000.0
+    wait_for_wakeword = True
 
     while True:
         message = await websocket.recv()

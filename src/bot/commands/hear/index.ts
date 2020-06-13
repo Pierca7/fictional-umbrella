@@ -13,20 +13,10 @@ import axios from "axios";
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-const encodePorcupineAudioStream = (baseStream: Readable): FfmpegCommand => {
-  return ffmpeg(baseStream)
-    .inputFormat("s32le")
-    .audioFrequency(16000)
-    .audioChannels(1)
-    .audioCodec("pcm_s16le")
-    .outputOptions("-bufsize 1024")
-    .format("s16le");
-};
-
 const encodeVoskAudioStream = (baseStream: Readable): FfmpegCommand => {
   return ffmpeg(baseStream)
     .inputFormat("s32le")
-    .audioFrequency(8000)
+    .audioFrequency(16000)
     .audioChannels(1)
     .audioCodec("pcm_s16le")
     .outputOptions("-bufsize 1024")
@@ -39,7 +29,6 @@ export let baseStream: Readable;
 const hear = async (message: Message): Promise<void> => {
   try {
     const connection = await joinVoiceChannel(message);
-    const wakewordClient = WakewordClient.create();
 
     // We need to play a sound to be able to receive voice data.
     connection.play(
@@ -54,64 +43,28 @@ const hear = async (message: Message): Promise<void> => {
       end: "manual",
     });
 
-    const wakewordStream = encodePorcupineAudioStream(baseStream);
-    wakewordStream.pipe(wakewordClient.input);
+    // eslint-disable-next-line new-cap
+    ws = WebSocketStream(config.ws);
 
-    wakewordClient.on("keyword", data => {
-      message.reply(`Keyword detected: ${data.toString()}`);
-
-      baseStream.unpipe();
-
-      // eslint-disable-next-line new-cap
-      ws = WebSocketStream(config.ws);
-
-      ws.on("error", (err: Error) => {
+    ws.on("error", (err: Error) => {
+      if (err) throw err;
+    })
+      .on("close", (err: Error) => {
         if (err) throw err;
+        console.log(`Closing ws`);
       })
-        .on("close", (err: Error) => {
-          if (err) throw err;
-          console.log(`Closing ws`);
-        })
-        .on("data", async (wsData: any) => {
-          const result = JSON.parse(wsData.toString());
+      .on("data", async (wsData: any) => {
+        console.log("dataa");
+        const result = JSON.parse(wsData.toString());
 
-          if (!result.text) {
-            return;
-          }
+        if (!result.text) {
+          return;
+        }
 
-          message.reply(`Searching for ${result.text}...`);
+        message.reply(`Searching for ${result.text}...`);
+      });
 
-          const videos = await axios.get(
-            "https://www.googleapis.com/youtube/v3/search",
-            {
-              params: {
-                key: config.ytkey,
-                part: "snippet",
-                order: "relevance",
-                q: result.text,
-                type: "video",
-              },
-            },
-          );
-
-          const video = videos.data.items[0];
-          const id = video.id.videoId;
-          const title = video.snippet.title;
-
-          connection.play(
-            ytdl(`https://www.youtube.com/watch?v=${id}`, {
-              quality: "highestaudio",
-              filter: "audioonly",
-            }),
-          );
-
-          message.reply(`Playing ${title}`);
-        });
-
-      encodeVoskAudioStream(baseStream).pipe(ws);
-    });
-
-    wakewordClient.on("error", data => console.log(data.toString()));
+    encodeVoskAudioStream(baseStream).pipe(ws);
   } catch (error) {
     console.error(error);
   }

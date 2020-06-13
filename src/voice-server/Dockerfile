@@ -24,7 +24,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 RUN \
-    git clone -b lookahead --single-branch https://github.com/Pierca7/kaldi /opt/kaldi \
+    git clone -b lookahead --single-branch https://github.com/alphacep/kaldi /opt/kaldi \
     && cd /opt/kaldi/tools \
     && sed -i 's:status=0:exit 0:g' extras/check_dependencies.sh \
     && sed -i 's:openfst_add_CXXFLAGS = -g -O2:openfst_add_CXXFLAGS = -g -O3 -msse2 -msse4 -mavx:g' Makefile \
@@ -40,7 +40,7 @@ RUN \
     && make -j $(nproc) online2 lm
 
 RUN \
-    git clone https://github.com/Pierca7/vosk-api /opt/vosk-api \
+    git clone https://github.com/alphacep/vosk-api /opt/vosk-api \
     && sed -i 's:--max-active=3000:--max-active=7000:g' /opt/vosk-api/src/model.cc \
     && sed -i 's:--beam=10.0:--beam=13.0:g' /opt/vosk-api/src/model.cc \
     && sed -i 's:--lattice-beam=2.0:--lattice-beam=6.0:g' /opt/vosk-api/src/model.cc \
