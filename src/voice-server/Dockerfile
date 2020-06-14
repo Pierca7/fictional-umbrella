@@ -46,7 +46,6 @@ RUN \
     && sed -i 's:--lattice-beam=2.0:--lattice-beam=6.0:g' /opt/vosk-api/src/model.cc \
     && cd /opt/vosk-api/python \
     && KALDI_ROOT=/opt/kaldi python3 ./setup.py install --user --single-version-externally-managed --root=/ \
-    && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server \
     && rm -rf /opt/kaldi
 
 RUN mkdir /opt/vosk-model-en \
@@ -62,6 +61,8 @@ RUN mkdir /opt/vosk-small-model-en \
    && unzip vosk-model-small-en-us-${SMALL_MODEL_VERSION}.zip \
    && mv vosk-model-small-en-us-${SMALL_MODEL_VERSION} model \
    && rm -rf vosk-model-small-en-us-${SMALL_MODEL_VERSION}.zip
+
+RUN echo '3' > /dev/null && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server
 
 EXPOSE 2700
 WORKDIR /opt/vosk-server/src/voice-server

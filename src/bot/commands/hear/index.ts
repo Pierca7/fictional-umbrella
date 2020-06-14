@@ -16,7 +16,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 const encodeVoskAudioStream = (baseStream: Readable): FfmpegCommand => {
   return ffmpeg(baseStream)
     .inputFormat("s32le")
-    .audioFrequency(16000)
+    .audioFrequency(8000)
     .audioChannels(1)
     .audioCodec("pcm_s16le")
     .outputOptions("-bufsize 1024")
@@ -54,7 +54,6 @@ const hear = async (message: Message): Promise<void> => {
         console.log(`Closing ws`);
       })
       .on("data", async (wsData: any) => {
-        console.log("dataa");
         const result = JSON.parse(wsData.toString());
 
         if (!result.text) {

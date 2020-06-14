@@ -25,6 +25,7 @@ if len(sys.argv) > 2:
    vosk_small_model_path = sys.argv[2]
 
 wakeword_model = Model(vosk_small_model_path)
+action_model = Model(vosk_small_model_path)
 model = Model(vosk_model_path)
 pool = concurrent.futures.ThreadPoolExecutor()
 loop = asyncio.get_event_loop()
@@ -35,33 +36,38 @@ def process_chunk(rec, message):
     else:
         return rec.PartialResult(), False
 
-def process_wakeword_chunk(rec, message):
-    if rec.AcceptWaveform(message):
-        return rec.Result(), True
-    else:
-        return rec.PartialResult(), False
-
 async def recognize(websocket, path):
     wakeword_rec = None
+    action_rec = None
     rec = None
-    word_list = None
-    sample_rate = 16000.0
     wait_for_wakeword = True
-
+    wait_for_action = False
+    wakeword = "hey discord"
+    action_list = "volume up down play pause next previous jump"
+    sample_rate = 8000.0
+    
     while True:
         message = await websocket.recv()
 
         # Create the wakeword recognizer 
         if not wakeword_rec:
-            wakeword_rec = KaldiRecognizer(wakeword_model, sample_rate, "volume up down play pause next previous jump")
+            wakeword_rec = KaldiRecognizer(wakeword_model, sample_rate, wakeword)
 
-        # Create the recognizer
+        # Create the action recognizer 
+        if not action_rec:
+            action_rec = KaldiRecognizer(wakeword_model, sample_rate, action_list)
+
+        # Create the general recognizer
         if not rec:
             rec = KaldiRecognizer(model, sample_rate)
 
         if wait_for_wakeword:
-            response, wakeword_detected = await loop.run_in_executor(pool, process_wakeword_chunk, wakeword_rec, message)
+            response, wakeword_detected = await loop.run_in_executor(pool, process_chunk, wakeword_rec, message)
             wait_for_wakeword = not wakeword_detected
+            wait_for_action = wakeword_detected
+        elif wait_for_action:
+            response, action_detected = await loop.run_in_executor(pool, process_chunk, action_rec, message)
+            wait_for_action = not action_detected
         else:
             response, phrase_detected = await loop.run_in_executor(pool, process_chunk, rec, message)
             wait_for_wakeword = phrase_detected
