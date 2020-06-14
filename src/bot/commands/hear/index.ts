@@ -26,6 +26,8 @@ const encodeVoskAudioStream = (baseStream: Readable): FfmpegCommand => {
 export let ws: WebSocketStream.WebSocketDuplex;
 export let baseStream: Readable;
 
+let reply: Message;
+
 const hear = async (message: Message): Promise<void> => {
   try {
     const connection = await joinVoiceChannel(message);
@@ -56,13 +58,39 @@ const hear = async (message: Message): Promise<void> => {
       .on("data", async (wsData: any) => {
         const result = wsData.toString();
 
-        console.log(result);
+        if (result === "wakeword detected") {
+          reply = await message.reply("Waiting for action...");
+        } else if (result === "play") {
+          await reply.edit("Play command detected. Waiting for song...");
+        } else {
+          await reply.edit(`Searching for ${result}...`);
 
-        // if (!result.text) {
-        //   return;
-        // }
+          const videos = await axios.get(
+            "https://www.googleapis.com/youtube/v3/search",
+            {
+              params: {
+                key: config.ytkey,
+                part: "snippet",
+                q: result,
+                topicId: "/m/04rlf",
+                type: "video",
+              },
+            },
+          );
 
-        // message.reply(`Searching for ${result.text}...`);
+          const video = videos.data.items[0];
+          const id = video.id.videoId;
+          const title = video.snippet.title;
+
+          connection.play(
+            ytdl(`https://www.youtube.com/watch?v=${id}`, {
+              quality: "highestaudio",
+              filter: "audioonly",
+            }),
+          );
+
+          await reply.edit(`Playing ${title}`);
+        }
       });
 
     encodeVoskAudioStream(baseStream).pipe(ws);
