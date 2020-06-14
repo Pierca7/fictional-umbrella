@@ -44,7 +44,7 @@ async def recognize(websocket, path):
     wait_for_action = False
     wakeword = "hey discord"
     action_list = "volume up down play pause next previous jump"
-    sample_rate = 8000.0
+    sample_rate = 16000.0
     
     while True:
         message = await websocket.recv()

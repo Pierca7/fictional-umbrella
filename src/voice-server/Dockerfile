@@ -62,7 +62,7 @@ RUN mkdir /opt/vosk-small-model-en \
    && mv vosk-model-small-en-us-${SMALL_MODEL_VERSION} model \
    && rm -rf vosk-model-small-en-us-${SMALL_MODEL_VERSION}.zip
 
-RUN echo '3' > /dev/null && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server
+RUN echo '4' > /dev/null && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server
 
 EXPOSE 2700
 WORKDIR /opt/vosk-server/src/voice-server
