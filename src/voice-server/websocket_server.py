@@ -32,20 +32,40 @@ loop = asyncio.get_event_loop()
 
 def process_chunk(rec, message):
     if rec.AcceptWaveform(message):
-        return rec.Result(), True
+        return True, rec.Result()
     else:
-        return rec.PartialResult(), False
+        return False, rec.PartialResult()
+
+def is_wakeword(rec, message):
+    if not rec.AcceptWaveform(message):
+        rec.PartialResult()
+        return False
+
+    result = json.loads(rec.Result())        
+    return result["text"] == "hey discord"
+
+def has_action(rec, message):
+    if not rec.AcceptWaveform(message):
+        rec.PartialResult()        
+    else:
+        actions = ("play", "pause", "previous", "next", "volume up", "volume down")
+        result = json.loads(rec.Result())["text"]            
+
+        if result in actions:
+            return True, result
+
+    return False, ""
 
 async def recognize(websocket, path):
     wakeword_rec = None
     action_rec = None
     rec = None
+    wakeword = "hey discord"
+    action_list = "volume up down play pause next previous"
+    sample_rate = 16000.0
     wait_for_wakeword = True
     wait_for_action = False
-    wakeword = "hey discord"
-    action_list = "volume up down play pause next previous jump"
-    sample_rate = 16000.0
-    
+
     while True:
         message = await websocket.recv()
 
@@ -62,17 +82,26 @@ async def recognize(websocket, path):
             rec = KaldiRecognizer(model, sample_rate)
 
         if wait_for_wakeword:
-            response, wakeword_detected = await loop.run_in_executor(pool, process_chunk, wakeword_rec, message)
+            wakeword_detected = await loop.run_in_executor(pool, is_wakeword, wakeword_rec, message)
             wait_for_wakeword = not wakeword_detected
             wait_for_action = wakeword_detected
+            
+            if wakeword_detected:
+                await websocket.send("wakeword detected")
+
         elif wait_for_action:
-            response, action_detected = await loop.run_in_executor(pool, process_chunk, action_rec, message)
+            action_detected, response = await loop.run_in_executor(pool, has_action, action_rec, message)
             wait_for_action = not action_detected
+
+            if action_detected:
+                await websocket.send(response)
+
         else:
-            response, phrase_detected = await loop.run_in_executor(pool, process_chunk, rec, message)
+            phrase_detected, response = await loop.run_in_executor(pool, process_chunk, rec, message)
             wait_for_wakeword = phrase_detected
             
-        await websocket.send(response)
+            if phrase_detected:
+                await websocket.send(response)
 
 start_server = websockets.serve(
     recognize, vosk_interface, vosk_port)
