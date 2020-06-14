@@ -32,7 +32,8 @@ loop = asyncio.get_event_loop()
 
 def process_chunk(rec, message):
     if rec.AcceptWaveform(message):
-        return True, rec.Result()
+        result = json.loads(rec.Result())
+        return True, result["text"]
     else:
         return False, rec.PartialResult()
 
@@ -41,7 +42,7 @@ def is_wakeword(rec, message):
         rec.PartialResult()
         return False
 
-    result = json.loads(rec.Result())        
+    result = json.loads(rec.Result())
     return result["text"] == "hey discord"
 
 def has_action(rec, message):
