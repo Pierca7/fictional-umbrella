@@ -2,7 +2,7 @@
 import "regenerator-runtime/runtime.js";
 import { Client } from "discord.js";
 import config from "./config";
-import waitForCommands from "bot/commands";
+import waitForCommands from "commands/index";
 
 const { token } = config;
 

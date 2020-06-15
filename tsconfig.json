@@ -1,29 +1,41 @@
 {
   "compilerOptions": {
-      "module": "commonjs",
-      "esModuleInterop": true,
-      "allowJs": true,
-      "allowSyntheticDefaultImports": true,
-      "target": "es6",
-      "noImplicitAny": true,
-      "moduleResolution": "node",
-      "sourceMap": true,
-      "outDir": "lib",
-      "baseUrl": ".",
-      "declaration": true,
-      "paths": {
-          "*": [
-              "node_modules/*",
-          ],
-          "bot/*": [
-            "src/bot/*"
-          ],
-          "commands/*": [
-            "src/bot/commands/*"
-          ]
-      }
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "lib",
+    "baseUrl": ".",
+    "declaration": true,
+    "paths": {
+      "*": [
+        "node_modules/*",
+      ],
+      "assets/*": [
+        "src/bot/assets/*"
+      ],
+      "commands/*": [
+        "src/bot/commands/*"
+      ],
+      "configuration/*": [
+        "src/bot/configuration/*"
+      ],
+      "helpers/*": [
+        "src/bot/helpers/*"
+      ],
+      "models/*": [
+        "src/bot/models/*"
+      ],
+      "services/*": [
+        "src/bot/services/*",
+      ],
+    }
   },
   "include": [
-      "src/**/*"
+    "src/**/*"
   ]
 }

@@ -1,0 +1,15 @@
+export enum VoiceCommands {
+  Play = "play",
+  Resume = "resume",
+  Pause = "pause",
+  Add = "add",
+  Remove = "remove",
+  VolumeUp = "volume up",
+  VolumeDown = "volume down",
+  Previous = "previous",
+  Next = "next",
+  Queue = "queue",
+  Jump = "jump",
+  Shuffle = "shuffle",
+  Loop = "loop",
+}

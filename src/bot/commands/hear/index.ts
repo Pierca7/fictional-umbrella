@@ -1,32 +1,11 @@
 /* eslint-disable no-console */
-import { Message } from "discord.js";
-import { joinVoiceChannel } from "bot/helpers/join-channel";
 import path from "path";
-import ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
-import { WakewordClient } from "../../helpers/wakeword";
-import config from "../../config";
-import { Readable } from "stream";
-import WebSocketStream from "websocket-stream";
-import ytdl from "ytdl-core";
-import axios from "axios";
-
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-ffmpeg.setFfmpegPath(ffmpegPath);
-
-const encodeVoskAudioStream = (baseStream: Readable): FfmpegCommand => {
-  return ffmpeg(baseStream)
-    .inputFormat("s32le")
-    .audioFrequency(16000)
-    .audioChannels(1)
-    .audioCodec("pcm_s16le")
-    .outputOptions("-bufsize 1024")
-    .format("s16le");
-};
-
-export let ws: WebSocketStream.WebSocketDuplex;
-export let baseStream: Readable;
-
-let reply: Message;
+import YoutubeService from "services/youtube-service";
+import { Message } from "discord.js";
+import { joinVoiceChannel } from "helpers/join-channel";
+import { VoiceService } from "services/voice-service";
+import { VoiceCommands } from "models/voice-commands";
+import VoiceCommandsManager from "commands/voice-commands/voice-commands";
 
 const hear = async (message: Message): Promise<void> => {
   try {
@@ -40,60 +19,50 @@ const hear = async (message: Message): Promise<void> => {
       },
     );
 
-    baseStream = connection.receiver.createStream(message, {
+    const audio = connection.receiver.createStream(message, {
       mode: "pcm",
       end: "manual",
     });
 
-    // eslint-disable-next-line new-cap
-    ws = WebSocketStream(config.ws);
+    const voiceService = new VoiceService();
+    const voiceCommandsManager = new VoiceCommandsManager(connection);
 
-    ws.on("error", (err: Error) => {
-      if (err) throw err;
-    })
-      .on("close", (err: Error) => {
-        if (err) throw err;
-        console.log(`Closing ws`);
+    voiceService.recognize(audio);
+
+    const reply = await message.reply("Wating for wakeword...");
+
+    voiceService
+      .on("wakeword", async () => {
+        await reply.edit("Waiting for command...");
       })
-      .on("data", async (wsData: any) => {
-        const result = wsData.toString();
-
-        if (result === "wakeword detected") {
-          reply = await message.reply("Waiting for action...");
-        } else if (result === "play") {
-          await reply.edit("Play command detected. Waiting for song...");
-        } else {
-          await reply.edit(`Searching for ${result}...`);
-
-          const videos = await axios.get(
-            "https://www.googleapis.com/youtube/v3/search",
-            {
-              params: {
-                key: config.ytkey,
-                part: "snippet",
-                q: result,
-                topicId: "/m/04rlf",
-                type: "video",
-              },
-            },
-          );
-
-          const video = videos.data.items[0];
-          const id = video.id.videoId;
-          const title = video.snippet.title;
-
-          connection.play(
-            ytdl(`https://www.youtube.com/watch?v=${id}`, {
-              quality: "highestaudio",
-              filter: "audioonly",
-            }),
-          );
-
-          await reply.edit(`Playing ${title}`);
+      .on("command", async (command: VoiceCommands) => {
+        switch (command) {
+          default:
+            break;
+          case VoiceCommands.Play:
+            await reply.edit("Waiting for song...");
+            break;
+          case VoiceCommands.Resume:
+            voiceCommandsManager.resume();
+            break;
+          case VoiceCommands.Pause:
+            voiceCommandsManager.pause();
+            break;
+          case VoiceCommands.VolumeUp:
+            voiceCommandsManager.volumeUp();
+            break;
+          case VoiceCommands.VolumeDown:
+            voiceCommandsManager.volumeDown();
+            break;
         }
-      });
+      })
+      .on("data", async (data: string) => {
+        await reply.edit(`Searching for ${data}`);
 
-    encodeVoskAudioStream(baseStream).pipe(ws);
+        const song = await voiceCommandsManager.search(data);
+
+        await voiceCommandsManager.play(song);
+      });
   } catch (error) {
     console.error(error);
   }

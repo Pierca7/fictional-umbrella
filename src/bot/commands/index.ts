@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import configuration from "bot/configuration";
+import configuration from "configuration/index";
 import { Message, Client } from "discord.js";
 import hear from "commands/hear";
 

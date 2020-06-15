@@ -12,7 +12,8 @@
         "allowTemplateLiterals": true
       }
     ],
-    "@typescript-eslint/camelcase": "off"
+    "@typescript-eslint/camelcase": "off",
+    "no-unused-expressions": ["error", { "allowShortCircuit": true }]
   },
   "settings": {
     "import/resolver": {
