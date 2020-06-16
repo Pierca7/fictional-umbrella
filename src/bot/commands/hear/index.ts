@@ -4,7 +4,7 @@ import { Message } from "discord.js";
 import { joinVoiceChannel } from "helpers/join-channel";
 import { VoiceService } from "services/voice-service";
 import { VoiceCommands } from "models/voice-commands";
-import VoiceCommandsManager from "commands/voice-commands/voice-commands";
+import VoiceRadio from "commands/voice-commands/voice-commands";
 
 const hear = async (message: Message): Promise<void> => {
   try {
@@ -24,7 +24,7 @@ const hear = async (message: Message): Promise<void> => {
     });
 
     const voiceService = new VoiceService();
-    const voiceCommandsManager = new VoiceCommandsManager(connection);
+    const voiceCommandsManager = new VoiceRadio(connection);
 
     voiceService.recognize(audio);
 
@@ -60,7 +60,7 @@ const hear = async (message: Message): Promise<void> => {
 
         const song = await voiceCommandsManager.search(data);
 
-        await voiceCommandsManager.play(song);
+        await voiceCommandsManager.playOnce(song);
       });
   } catch (error) {
     console.error(error);

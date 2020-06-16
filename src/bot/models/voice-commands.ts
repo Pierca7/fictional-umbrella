@@ -12,4 +12,5 @@ export enum VoiceCommands {
   Jump = "jump",
   Shuffle = "shuffle",
   Loop = "loop",
+  Stop = "stop",
 }

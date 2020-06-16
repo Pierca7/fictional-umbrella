@@ -15,16 +15,20 @@ export class Queue<T> {
     return this._elements.length;
   }
 
-  public isEmpty(): boolean {
-    return this._elements.length === 0;
+  public dequeue(): T {
+    return this._elements.shift();
+  }
+
+  public empty(): void {
+    this._elements = [];
   }
 
   public enqueue(element: T): number {
     return this._elements.push(element);
   }
 
-  public dequeue(): T {
-    return this._elements.shift();
+  public isEmpty(): boolean {
+    return this._elements.length === 0;
   }
 
   public peek(): T {
@@ -33,6 +37,26 @@ export class Queue<T> {
 }
 
 export class SongQueue extends Queue<Song> {
+  private _current: number;
+
+  constructor(elements?: Array<Song>) {
+    super(elements);
+
+    this._current = 0;
+  }
+
+  public get currentIndex(): number {
+    return this._current;
+  }
+
+  public get currentSong(): Song {
+    return this._elements[this._current];
+  }
+
+  public changeSong(index: number): void {
+    this._current = index;
+  }
+
   public toString(): string {
     const songs = this._elements.map(
       (song, index) => `${index + 1}) ${song.title}`,
