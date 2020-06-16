@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import path from "path";
-import YoutubeService from "services/youtube-service";
 import { Message } from "discord.js";
 import { joinVoiceChannel } from "helpers/join-channel";
 import { VoiceService } from "services/voice-service";

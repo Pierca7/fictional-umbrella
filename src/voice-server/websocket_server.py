@@ -93,9 +93,9 @@ async def recognize(websocket, path):
         elif wait_for_action:
             action_detected, response = await loop.run_in_executor(pool, has_action, action_rec, message)
             wait_for_action = not action_detected
-            wait_for_wakeword = response != "play"
 
             if action_detected:
+                wait_for_wakeword = response != "play"
                 await websocket.send(response)
 
         else:
