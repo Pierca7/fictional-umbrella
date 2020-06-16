@@ -1,4 +1,4 @@
-import { VoiceConnection, StreamDispatcher } from "discord.js";
+import { VoiceConnection, StreamDispatcher, TextChannel } from "discord.js";
 import { Readable } from "stream";
 import YoutubeService from "services/youtube-service";
 import Song from "models/song";
@@ -12,16 +12,22 @@ export enum StreamingPlatform {
 
 class VoiceRadio {
   private _connection: VoiceConnection;
+  private _textChannel: TextChannel;
   private _stream: StreamDispatcher;
   private _queue: SongQueue;
 
-  constructor(connection: VoiceConnection) {
+  constructor(connection: VoiceConnection, textChannel: TextChannel) {
     this._connection = connection;
+    this._textChannel = textChannel;
     this._queue = new SongQueue();
   }
 
   public get paused(): boolean {
     return this._stream && this._stream.paused;
+  }
+
+  public get queue(): string {
+    return this._queue.toString();
   }
 
   public enqueue(song: Song): number {
@@ -96,6 +102,8 @@ class VoiceRadio {
     const volume = clamp(this._stream.volume - 0.2, 0, 1);
 
     this._stream.setVolume(volume);
+
+    this._textChannel.send("Volume down!");
   }
 
   public volumeUp(): void {
@@ -106,6 +114,8 @@ class VoiceRadio {
     const volume = clamp(this._stream.volume + 0.2, 0, 1);
 
     this._stream.setVolume(volume);
+
+    this._textChannel.send("Volume up!");
   }
 
   private async _play(song: Song): Promise<void> {

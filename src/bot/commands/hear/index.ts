@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import path from "path";
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { joinVoiceChannel } from "helpers/join-channel";
 import { VoiceService } from "services/voice-service";
 import { VoiceCommands } from "models/voice-commands";
@@ -24,11 +24,14 @@ const hear = async (message: Message): Promise<void> => {
     });
 
     const voiceService = new VoiceService();
-    const voiceCommandsManager = new VoiceRadio(connection);
+    const voiceRadio = new VoiceRadio(
+      connection,
+      message.channel as TextChannel,
+    );
 
     voiceService.recognize(audio);
 
-    const reply = await message.reply("Wating for wakeword...");
+    const reply = await message.reply("Waiting for wakeword...");
 
     voiceService
       .on("wakeword", async () => {
@@ -42,25 +45,33 @@ const hear = async (message: Message): Promise<void> => {
             await reply.edit("Waiting for song...");
             break;
           case VoiceCommands.Resume:
-            voiceCommandsManager.resume();
+            voiceRadio.resume();
             break;
           case VoiceCommands.Pause:
-            voiceCommandsManager.pause();
+            voiceRadio.pause();
+            break;
+          case VoiceCommands.Stop:
+            voiceRadio.stop();
             break;
           case VoiceCommands.VolumeUp:
-            voiceCommandsManager.volumeUp();
+            voiceRadio.volumeUp();
             break;
           case VoiceCommands.VolumeDown:
-            voiceCommandsManager.volumeDown();
+            voiceRadio.volumeDown();
+            break;
+          case VoiceCommands.Queue:
+            message.channel.send(voiceRadio.queue);
             break;
         }
       })
       .on("data", async (data: string) => {
         await reply.edit(`Searching for ${data}`);
 
-        const song = await voiceCommandsManager.search(data);
+        const song = await voiceRadio.search(data);
 
-        await voiceCommandsManager.playOnce(song);
+        await voiceRadio.playOnce(song);
+
+        await reply.edit(`Now playing ${song.title}`);
       });
   } catch (error) {
     console.error(error);
