@@ -49,7 +49,7 @@ def has_action(rec, message):
     if not rec.AcceptWaveform(message):
         rec.PartialResult()        
     else:
-        actions = ("play", "pause", "previous", "next", "volume up", "volume down")
+        actions = ("play", "pause", "previous", "next", "volume up", "volume down", "resume", "loop", "shuffle", "add", "remove", "queue", "cancel")
         result = json.loads(rec.Result())["text"]            
 
         if result in actions:
@@ -62,7 +62,7 @@ async def recognize(websocket, path):
     action_rec = None
     rec = None
     wakeword = "hey discord"
-    action_list = "volume up down play pause next previous"
+    action_list = "volume up down play pause next previous resume loop shuffle add remove queue cancel"
     sample_rate = 16000.0
     wait_for_wakeword = True
     wait_for_action = False
@@ -93,6 +93,7 @@ async def recognize(websocket, path):
         elif wait_for_action:
             action_detected, response = await loop.run_in_executor(pool, has_action, action_rec, message)
             wait_for_action = not action_detected
+            wait_for_wakeword = response != "play"
 
             if action_detected:
                 await websocket.send(response)
