@@ -50,7 +50,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Plaulist'
+              $ref: '#/components/schemas/NewPlaylist'
       responses:
         201:
           description: Playlist successfully added
@@ -156,6 +156,8 @@ components:
         length:
           type: integer
           format: int64
+        url:
+          type: string
     Playlist:
       required:
         - id
@@ -171,6 +173,8 @@ components:
         name:
           type: string
           maxLength: 256
+        url:
+          type: string
         provider:
           type: string
           enum:
@@ -187,6 +191,18 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Playlist"
+    NewPlaylist:
+      required:
+        - provider
+        - url
+      properties:
+        provider:
+          type: string
+          enum:
+            - youtube
+            - spotify
+        url:
+          type: string
     Error:
       required:
         - code
