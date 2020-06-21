@@ -20,4 +20,5 @@ client.once("disconnect", () => {
   console.log("Your bot has been disconnected.");
 });
 
+
 export default client;

@@ -15,27 +15,9 @@
       "*": [
         "node_modules/*",
       ],
-      "assets/*": [
-        "src/bot/assets/*"
-      ],
-      "commands/*": [
-        "src/bot/commands/*"
-      ],
-      "configuration/*": [
-        "src/bot/configuration/*"
-      ],
-      "helpers/*": [
-        "src/bot/helpers/*"
-      ],
-      "models/*": [
-        "src/bot/models/*"
-      ],
-      "services/*": [
-        "src/bot/services/*",
-      ],
     }
   },
   "include": [
-    "src/bot/**/*"
+    "src/**/*"
   ]
 }

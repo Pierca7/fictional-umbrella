@@ -1,0 +1,199 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Bumblebee API
+  license:
+    name: MIT
+servers:
+  - url: https://bumblebee-bot/api/v1
+paths:
+  /playlists:
+    get:
+      summary: List all playlists
+      operationId: listPlaylists
+      tags:
+        - playlists
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: A paged array of playlists
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlists"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Add a playlist
+      operationId: addPlaylist
+      tags:
+        - playlist
+      requestBody:
+        description: Playlist to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plaulist'
+      responses:
+        201:
+          description: Playlist successfully added
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /playlist/{id}:
+    get:
+      summary: Info for a specific playlist
+      operationId: showPlaylistById
+      tags:
+        - playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the playlist to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Playlist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete a specific playlist
+      operationId: deletePlaylistById
+      tags:
+        - playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The id of the playlist to delete
+          schema:
+            type: string
+      responses:
+        204:
+          description: Playlist successfully deleted
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Playlist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Song:
+      required:
+        - name
+        - length
+      properties:
+        name:
+          type: string
+          maxLength: 256
+        length:
+          type: integer
+          format: int64
+    Playlist:
+      required:
+        - id
+        - name
+        - provider
+        - length
+        - songs
+        - url
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          maxLength: 256
+        provider:
+          type: string
+          enum:
+            - youtube
+            - spotify
+        length:
+          type: integer
+          format: int64
+        songs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Song"
+    Playlists:
+      type: array
+      items:
+        $ref: "#/components/schemas/Playlist"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
