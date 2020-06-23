@@ -5,6 +5,7 @@ import HttpStatusCodes from "http-status-codes";
 
 import Request from "../types/Request";
 import Playlist, { IPlaylist, Providers } from "../models/Playlist";
+import SpotifyService from "../services/spotify-service";
 
 const providers = Object.values(Providers);
 // eslint-disable-next-line new-cap
@@ -35,6 +36,13 @@ router.post(
     const { url, provider } = req.body;
 
     try {
+      const spotifyPlaylistId = (url as string).split("/").pop();
+      const spotifyPlaylist = await SpotifyService.getPlaylist(
+        spotifyPlaylistId,
+      );
+
+      console.log(spotifyPlaylist);
+
       // Create
       const playlist = new Playlist({
         name: String(Math.random()),
