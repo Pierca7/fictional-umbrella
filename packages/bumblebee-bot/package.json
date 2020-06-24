@@ -1,0 +1,42 @@
+{
+  "name": "@bumblebee/bot",
+  "private": true,
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "build": "rimraf ./lib && npm run build:js",
+    "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
+    "start": "npm run build && node ./lib/src/index.js",
+    "postinstall": "patch-package"
+  },
+  "repository": "git+https://github.com/Pierca7/fictional-umbrella.git",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pierca7/fictional-umbrella/issues"
+  },
+  "homepage": "https://github.com/Pierca7/fictional-umbrella#readme",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "axios": "^0.19.2",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-static": "^4.2.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "regenerator-runtime": "^0.13.5",
+    "websocket-stream": "^5.5.2",
+    "ytdl-core": "^2.1.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/fluent-ffmpeg": "^2.1.14",
+    "@types/node": "^14.0.5"
+  }
+}

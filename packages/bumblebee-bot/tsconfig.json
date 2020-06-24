@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "*": ["node_modules/*"],
+      "assets/*": ["src/assets/*"],
+      "commands/*": ["src/commands/*"],
+      "configuration/*": ["src/configuration/*"],
+      "helpers/*": ["src/helpers/*"],
+      "models/*": ["src/models/*"],
+      "services/*": ["src/services/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

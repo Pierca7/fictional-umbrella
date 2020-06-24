@@ -1,4 +1,3 @@
-import config from "config";
 import { Response, NextFunction } from "express";
 import HttpStatusCodes from "http-status-codes";
 import jwt from "jsonwebtoken";
@@ -19,7 +18,7 @@ export default function auth(req: Request, res: Response, next: NextFunction) {
 
   // Verify token
   try {
-    const payload: Payload | any = jwt.verify(token, config.get("jwtSecret"));
+    const payload: Payload | any = jwt.verify(token, "");
     req.userId = payload.userId;
     return next();
   } catch (err) {

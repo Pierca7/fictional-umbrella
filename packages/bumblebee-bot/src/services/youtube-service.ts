@@ -1,5 +1,4 @@
 import axios from "axios";
-import config from "../config";
 import Song from "models/song";
 import ytdl from "ytdl-core";
 import { Readable } from "stream";
@@ -12,7 +11,7 @@ abstract class YoutubeService {
   public static async searchVideo(query: string): Promise<Song> {
     const videos = await axios.get(this._youtubeSearchUrl, {
       params: {
-        key: config.ytkey,
+        key: process.env.YOUTUBE_API_KEY,
         part: "snippet",
         q: query,
         topicId: "/m/04rlf",

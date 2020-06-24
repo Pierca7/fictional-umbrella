@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-import { spotifyTokenUrl, spotifyApiUrl } from "../../config/constants";
-import config from "../../config";
+import { spotifyTokenUrl, spotifyApiUrl } from "configuration/constants";
 import axios from "axios";
 
 export interface SpotifyToken {
@@ -29,7 +28,7 @@ abstract class SpotifyService {
   }
 
   private static _getToken(): Promise<void> {
-    const data = `${config.spotifyClientId}:${config.spotifyClientSecret}`;
+    const data = `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`;
     const buffer = new Buffer(data);
     const authorizationHeader = buffer.toString("base64");
 

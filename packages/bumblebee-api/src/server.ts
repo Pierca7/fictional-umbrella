@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
 import "regenerator-runtime/runtime.js";
+
+import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import express from "express";
-
-import connectDB from "./config/database";
+import connectDB from "./configuration/database";
 import playlists from "./controllers/playlists";
-import SpotifyService from "./services/spotify-service";
+
+dotenv.config();
 
 const app = express();
 

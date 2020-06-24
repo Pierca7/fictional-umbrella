@@ -5,7 +5,7 @@ import HttpStatusCodes from "http-status-codes";
 
 import Request from "../types/Request";
 import Playlist, { IPlaylist, Providers } from "../models/Playlist";
-import SpotifyService from "../services/spotify-service";
+import SpotifyService from "services/spotify/spotify-service";
 
 const providers = Object.values(Providers);
 // eslint-disable-next-line new-cap

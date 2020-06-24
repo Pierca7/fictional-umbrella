@@ -1,9 +1,8 @@
 import WebSocketStream from "websocket-stream";
-import config from "../config";
 import { EventEmitter } from "events";
 import { VoiceCommands } from "models/voice-commands";
 import { Readable } from "stream";
-import ffmpeg, { FfmpegCommand } from "fluent-ffmpeg";
+import ffmpeg from "fluent-ffmpeg";
 
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -65,7 +64,7 @@ export class VoiceService extends EventEmitter implements VoiceService {
     const commands = Object.values(VoiceCommands);
 
     // eslint-disable-next-line new-cap
-    this._ws = WebSocketStream(config.ws);
+    this._ws = WebSocketStream(process.env.VOICE_SERVER_URL);
 
     this._ws
       .on("error", (err: Error) => {

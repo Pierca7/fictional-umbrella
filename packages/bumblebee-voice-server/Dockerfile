@@ -62,8 +62,8 @@ RUN mkdir /opt/vosk-small-model-en \
    && mv vosk-model-small-en-us-${SMALL_MODEL_VERSION} model \
    && rm -rf vosk-model-small-en-us-${SMALL_MODEL_VERSION}.zip
 
-RUN echo '10' > /dev/null && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server
+RUN echo '11' > /dev/null && git clone https://github.com/Pierca7/fictional-umbrella /opt/vosk-server
 
 EXPOSE 2700
-WORKDIR /opt/vosk-server/src/voice-server
+WORKDIR /opt/vosk-server/packages/bumblebee-voice-server
 CMD [ "python3", "./websocket_server.py", "/opt/vosk-model-en/model", "/opt/vosk-small-model-en/model" ]
