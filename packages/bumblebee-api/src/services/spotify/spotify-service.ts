@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { spotifyTokenUrl, spotifyApiUrl } from "configuration/constants";
 import axios from "axios";
+import { SpotifyPlaylist } from "./models/playlist";
 
 export interface SpotifyToken {
   access_token: string;
@@ -13,7 +14,7 @@ abstract class SpotifyService {
   private static _token: SpotifyToken;
   private static _refreshing: boolean;
 
-  public static async getPlaylist(id: string): Promise<any> {
+  public static async getPlaylist(id: string): Promise<SpotifyPlaylist> {
     if (!this._token || !this._token.access_token) {
       await this._getToken();
     }

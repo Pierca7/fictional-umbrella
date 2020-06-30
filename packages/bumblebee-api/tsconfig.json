@@ -3,12 +3,12 @@
   "compilerOptions": {
     "paths": {
       "*": ["node_modules/*"],
-      "configuration/*": ["src/configuration/*"],
-      "controllers/*": ["src/controllers/*"],
-      "middleware/*": ["src/middleware/*"],
-      "models/*": ["src/models/*"],
-      "services/*": ["src/services/*"],
-      "types/*": ["src/types/*"]
+      "configuration/*": ["./src/configuration/*"],
+      "controllers/*": ["./src/controllers/*"],
+      "middleware/*": ["./src/middleware/*"],
+      "models/*": ["./src/models/*"],
+      "services/*": ["./src/services/*"],
+      "types/*": ["./src/types/*"]
     }
   },
   "include": ["src/**/*"]

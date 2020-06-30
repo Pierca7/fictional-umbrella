@@ -13,6 +13,7 @@
       }
     ],
     "@typescript-eslint/camelcase": "off",
+    "no-undef": "off",
     "no-unused-expressions": ["error", { "allowShortCircuit": true }]
   },
   "settings": {

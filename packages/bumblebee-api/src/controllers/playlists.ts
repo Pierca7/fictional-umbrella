@@ -1,11 +1,9 @@
 /* eslint-disable no-console */
-import { Router, Response } from "express";
+import { Router, Response, Request } from "express";
 import { check, validationResult } from "express-validator/check";
 import HttpStatusCodes from "http-status-codes";
-
-import Request from "../types/Request";
-import Playlist, { IPlaylist, Providers } from "../models/Playlist";
-import SpotifyService from "services/spotify/spotify-service";
+import { Providers, PlaylistDTO } from "../data-objects/playlist";
+import PlaylistManager from "../data-access/playlists";
 
 const providers = Object.values(Providers);
 // eslint-disable-next-line new-cap
@@ -27,30 +25,20 @@ router.post(
   ],
   async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       res.status(HttpStatusCodes.BAD_REQUEST).json({ errors: errors.array() });
 
       return;
     }
 
-    const { url, provider } = req.body;
-
     try {
-      const spotifyPlaylistId = (url as string).split("/").pop();
-      const spotifyPlaylist = await SpotifyService.getPlaylist(
-        spotifyPlaylistId,
+      const playlistDto = await PlaylistDTO.createFromSpotify(
+        req.body.url,
+        String(Math.random()),
       );
 
-      console.log(spotifyPlaylist);
-
-      // Create
-      const playlist = new Playlist({
-        name: String(Math.random()),
-        url,
-        provider,
-      });
-
-      await playlist.save();
+      const playlist = await PlaylistManager.create(playlistDto);
 
       res.json(playlist);
     } catch (err) {
@@ -70,13 +58,13 @@ router.get(
   "/",
   async (_req: Request, res: Response): Promise<void> => {
     try {
-      const playlists = await Playlist.find();
-
-      console.log(playlists);
+      const playlists = await PlaylistManager.getAll();
 
       res.json(playlists);
     } catch (err) {
-      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Server Error");
+      res
+        .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
+        .send("Internal Server Error");
     }
   },
 );
@@ -98,9 +86,7 @@ router.get(
         return;
       }
 
-      const playlist: IPlaylist = await Playlist.findOne({
-        id: req.params.id,
-      });
+      const playlist = await PlaylistManager.getById(playlistId);
 
       if (!playlist) {
         res
@@ -136,7 +122,7 @@ router.delete(
         return;
       }
 
-      await Playlist.findOneAndRemove({ _id: req.params.id });
+      await PlaylistManager.deleteById(playlistId);
 
       res.status(HttpStatusCodes.NO_CONTENT).json({ msg: "Playlist removed" });
     } catch (err) {
