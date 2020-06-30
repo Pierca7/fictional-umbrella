@@ -5,6 +5,7 @@ lib
 model
 
 ## Files
+lerna-debug.log
 yarn-error.log
 config.js
 .env
