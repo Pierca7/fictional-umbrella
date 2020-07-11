@@ -7,9 +7,7 @@ import { EContentTypeFilter } from "./models/EContentType";
 
 const ytsr = require("ytsr");
 
-export type YoutubeContentArray = Array<
-  Movie | Channel | Mix | Video | Playlist
->;
+export type YoutubeContentArray = Array<Movie | Channel | Mix | Video | Playlist>;
 
 export interface Filter {
   readonly ref?: string;
@@ -37,16 +35,10 @@ abstract class YoutubeService {
   }
 
   public static async searchPlaylist(query: string): Promise<Playlist[]> {
-    return this._search(query, EContentTypeFilter.Playlist) as Promise<
-      Playlist[]
-    >;
+    return this._search(query, EContentTypeFilter.Playlist) as Promise<Playlist[]>;
   }
 
-  private static async _search(
-    query: string,
-    type: EContentTypeFilter,
-    limit: number = 5,
-  ): Promise<YoutubeContentArray> {
+  private static async _search(query: string, type: EContentTypeFilter, limit: number = 5): Promise<YoutubeContentArray> {
     return new Promise((resolve, reject) => {
       let filter: Filter;
 

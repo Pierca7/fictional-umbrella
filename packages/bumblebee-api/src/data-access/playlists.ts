@@ -16,9 +16,7 @@ abstract class PlaylistManager extends DataAccess<PlaylistDTO, IPlaylist> {
     await Playlist.findByIdAndRemove(id);
   }
 
-  public static async deleteWhere(
-    condition: (value: IPlaylist) => boolean,
-  ): Promise<void> {
+  public static async deleteWhere(condition: (value: IPlaylist) => boolean): Promise<void> {
     await Playlist.remove(condition);
   }
 
@@ -34,10 +32,7 @@ abstract class PlaylistManager extends DataAccess<PlaylistDTO, IPlaylist> {
     return Playlist.find(condition);
   }
 
-  public static async updateById(
-    id: string,
-    data: PlaylistDTO,
-  ): Promise<IPlaylist> {
+  public static async updateById(id: string, data: PlaylistDTO): Promise<IPlaylist> {
     return new Promise(async (resolve, reject) => {
       const playlist = await Playlist.findById(id);
 

@@ -47,17 +47,12 @@ export class PlaylistDTO implements PlaylistDTO {
     this.url = url;
   }
 
-  public static async createFromSpotify(
-    url: string,
-    owner: string,
-  ): Promise<PlaylistDTO> {
+  public static async createFromSpotify(url: string, owner: string): Promise<PlaylistDTO> {
     const playlistId = url.split("/").pop();
     const playlist = await SpotifyService.getPlaylist(playlistId);
 
     const songPromises = playlist.tracks.items.map(item => {
-      const artistNames = item.track.artists
-        .map(artist => artist.name)
-        .join(" ");
+      const artistNames = item.track.artists.map(artist => artist.name).join(" ");
       const query = `${item.track.name} ${artistNames}`;
 
       return YoutubeService.searchVideo(query);
@@ -74,7 +69,7 @@ export class PlaylistDTO implements PlaylistDTO {
             name: video.title,
             url: video.link,
             length: parseLength(video.duration),
-          } as SongDTO),
+          } as SongDTO)
       );
 
     return new PlaylistDTO({

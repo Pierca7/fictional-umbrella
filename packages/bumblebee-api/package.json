@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rimraf ./lib && npm run build:js",
     "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
-    "start": "npm run build && node ./lib/src/server.js"
+    "start": "npm run build && node ./lib/src/server.js",
+    "prettify": "prettier --write src/**/*.ts --config ../../.prettierrc.js"
   },
   "repository": {
     "type": "git",
