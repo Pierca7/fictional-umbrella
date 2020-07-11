@@ -9,22 +9,30 @@ import playlists from "./controllers/playlists";
 
 dotenv.config();
 
-const app = express();
-
-// Connect to MongoDB
 connectDB();
+
+const app = express();
 
 // Express configuration
 app.set("port", process.env.PORT || 5000);
+
+// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/", (_req, res) => {
-  res.send("API Running");
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization, Origin, X-Requested-With, Content-Type, Accept",
+  );
+  next();
 });
 
+// Routes
 app.use("/api/playlists", playlists);
 
+// Init
 const port = app.get("port");
 const server = app.listen(port, () =>
   console.log(`Server started on port ${port}`),

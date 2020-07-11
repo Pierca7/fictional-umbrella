@@ -1,14 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "typeRoots": ["../../node_modules/@types/**/*"],
     "paths": {
       "*": ["node_modules/*"],
       "configuration/*": ["./src/configuration/*"],
       "controllers/*": ["./src/controllers/*"],
       "middleware/*": ["./src/middleware/*"],
-      "models/*": ["./src/models/*"],
-      "services/*": ["./src/services/*"],
-      "types/*": ["./src/types/*"]
+      "models/*": ["src/schemas/*"],
+      "services/*": ["./src/services/*"]
     }
   },
   "include": ["src/**/*"]
