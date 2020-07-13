@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import express from "express";
 import connectDB from "./configuration/database";
 import playlists from "./controllers/playlists";
+import auth from "./controllers/auth";
 
 dotenv.config();
 
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api/playlists", playlists);
+app.use("/playlists", playlists);
+app.use("/auth", auth);
 
 // Init
 const port = app.get("port");
