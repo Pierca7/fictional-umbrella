@@ -7,18 +7,21 @@ export enum Providers {
 }
 
 export interface SongDTO {
-  name: string;
-  url: string;
   length: number;
+  name: string;
+  originUrl: string;
+  thumbnail: string;
+  url: string;
 }
 
 export interface PlaylistDTO {
-  name: string;
-  provider: Providers;
-  url: string;
-  songs: Array<SongDTO>;
   length: number;
+  name: string;
   owner: string;
+  provider: Providers;
+  thumbnail: string;
+  songs: Array<SongDTO>;
+  url: string;
 }
 
 const parseLength = (string: string): number => {
@@ -37,7 +40,7 @@ const parseLength = (string: string): number => {
 
 export class PlaylistDTO implements PlaylistDTO {
   protected constructor(data: PlaylistDTO) {
-    const { length, name, owner, provider, songs, url } = data;
+    const { length, name, owner, provider, songs, url, thumbnail } = data;
 
     this.length = length;
     this.name = name;
@@ -45,40 +48,48 @@ export class PlaylistDTO implements PlaylistDTO {
     this.provider = provider;
     this.songs = songs;
     this.url = url;
+    this.thumbnail = thumbnail;
   }
 
-  public static async createFromSpotify(url: string, owner: string): Promise<PlaylistDTO> {
+  public static async createFromSpotify(url: string, owner: string, name?: string): Promise<PlaylistDTO> {
     const playlistId = url.split("/").pop();
     const playlist = await SpotifyService.getPlaylist(playlistId);
 
-    const songPromises = playlist.tracks.items.map(item => {
+    const songPromises = playlist.tracks.items.map(async item => {
       const artistNames = item.track.artists.map(artist => artist.name).join(" ");
       const query = `${item.track.name} ${artistNames}`;
 
-      return YoutubeService.searchVideo(query);
+      const video = await YoutubeService.searchVideo(query);
+
+      return {
+        ...video[0],
+        originArtists: item.track.artists,
+        originThumbnail: item.track.album.images[0].url,
+      };
     });
 
     const possibleSongs = await Promise.all(songPromises);
 
     // Take the first of the videos returned by Youtube and map them to the common interface
-    const songs = possibleSongs
-      .map(candidates => candidates[0])
-      .map(
-        video =>
-          ({
-            name: video.title,
-            url: video.link,
-            length: parseLength(video.duration),
-          } as SongDTO)
-      );
+    const songs = possibleSongs.map(
+      video =>
+        ({
+          length: parseLength(video.duration),
+          name: video.title,
+          originUrl: url,
+          thumbnail: video.originThumbnail,
+          url: video.link,
+        } as SongDTO)
+    );
 
     return new PlaylistDTO({
-      name: playlist.name,
+      length: playlist.tracks.total,
+      name: name || playlist.name,
       owner: owner,
       provider: Providers.Spotify,
-      length: playlist.tracks.total,
       songs: songs,
       url: playlist.uri,
+      thumbnail: playlist.images[0].url,
     });
   }
 }

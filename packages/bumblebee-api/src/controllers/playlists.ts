@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { Router, Response, Request } from "express";
 import { check, validationResult } from "express-validator/check";
-import HttpStatusCodes from "http-status-codes";
 import { Providers, PlaylistDTO } from "../data-objects/playlist";
+import HttpStatusCodes from "http-status-codes";
 import PlaylistManager from "../data-access/playlists";
 
 const providers = Object.values(Providers);
@@ -30,7 +30,7 @@ router.post(
     }
 
     try {
-      const playlistDto = await PlaylistDTO.createFromSpotify(req.body.url, String(Math.random()));
+      const playlistDto = await PlaylistDTO.createFromSpotify(req.body.url, String(Math.random()), req.body.name);
 
       const playlist = await PlaylistManager.create(playlistDto);
 

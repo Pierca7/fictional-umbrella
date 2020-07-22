@@ -8,7 +8,19 @@ export interface IPlaylist extends Document, PlaylistDTO {
 }
 
 const SongSchema: Schema = new Schema({
+  length: {
+    type: Number,
+    required: true,
+  },
   name: {
+    type: String,
+    required: true,
+  },
+  originUrl: {
+    type: String,
+    required: true,
+  },
+  thumbnail: {
     type: String,
     required: true,
   },
@@ -16,14 +28,18 @@ const SongSchema: Schema = new Schema({
     type: String,
     required: true,
   },
+});
+
+const PlaylistSchema: Schema = new Schema({
   length: {
     type: Number,
     required: true,
   },
-});
-
-const PlaylistSchema: Schema = new Schema({
   name: {
+    type: String,
+    required: true,
+  },
+  owner: {
     type: String,
     required: true,
   },
@@ -32,16 +48,12 @@ const PlaylistSchema: Schema = new Schema({
     required: true,
     enum: Object.values(Providers),
   },
-  url: {
+  songs: [SongSchema],
+  thumbnail: {
     type: String,
     required: true,
   },
-  songs: [SongSchema],
-  length: {
-    type: Number,
-    required: true,
-  },
-  owner: {
+  url: {
     type: String,
     required: true,
   },

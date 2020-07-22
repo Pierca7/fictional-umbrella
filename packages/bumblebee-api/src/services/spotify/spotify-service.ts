@@ -30,7 +30,7 @@ abstract class SpotifyService {
 
   private static _getToken(): Promise<void> {
     const data = `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`;
-    const buffer = new Buffer(data);
+    const buffer = Buffer.from(data);
     const authorizationHeader = buffer.toString("base64");
 
     return axios
