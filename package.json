@@ -8,6 +8,7 @@
     "start:api": "yarn workspace @bumblebee/api start",
     "start:bot": "yarn workspace @bumblebee/bot start",
     "start:server": "docker run -d -p 2700:2700 voice-server:latest",
+    "start:web": "yarn workspace @bumblebee/web start",
     "lint": "lerna run lint --since origin/master --",
     "lint:fix": "lerna run lint --fix --since origin/master --",
     "lint:all": "lerna run lint --",
