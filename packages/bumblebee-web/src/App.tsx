@@ -12,7 +12,7 @@ const homeRoute: NavbarItem = {
   path: "/",
 };
 
-const routes: Array<NavbarItem> = [
+const routes: ReadonlyArray<NavbarItem> = [
   {
     displayName: "Docs",
     path: "/docs",
@@ -21,6 +21,11 @@ const routes: Array<NavbarItem> = [
     displayName: "Dashboard",
     path: "/dashboard",
   },
+  {
+    displayName: "Log in",
+    path: "http://localhost:5000/auth",
+    externalLink: true
+  }
 ];
 
 function App() {

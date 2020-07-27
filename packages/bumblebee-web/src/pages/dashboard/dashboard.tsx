@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import Sidebar, { SidebarItem } from "../../components/sidebar/sidebar";
 import { useRouteMatch } from "react-router-dom";
 import Guilds from "./guilds/guilds";
 import Playlists from "./playlists/playlists";
 import Playlist from "./playlists/playlist/playlist";
+import { getUserDetails } from "../../services/user-service";
 
 const routes: ReadonlyArray<SidebarItem> = [
   {
@@ -14,11 +15,18 @@ const routes: ReadonlyArray<SidebarItem> = [
   {
     displayName: "Guilds",
     path: "/guilds",
-  },
+  }
 ];
 
 const Dashboard = () => {
   const match = useRouteMatch();
+  const [user, setUser] = useState();
+
+  console.log(user);
+
+  useEffect(() => {
+    getUserDetails().then(user => setUser(user));
+  }, [])
 
   return (
     <section className="flex flex-row w-full">

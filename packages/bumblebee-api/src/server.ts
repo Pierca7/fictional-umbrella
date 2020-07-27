@@ -11,6 +11,7 @@ import useDiscordStategy from "./strategies/discord";
 import passport from "passport";
 import session from "express-session";
 import mongoose from "mongoose";
+import cors from "cors"
 
 const Store = require("connect-mongo")(session);
 
@@ -29,7 +30,7 @@ app.use(session({
   cookie: {
     maxAge: 60000 * 60 * 24
   },
-  resave: false, 
+  resave: false,
   saveUninitialized: false,
   store: new Store({
     mongooseConnection: mongoose.connection
@@ -39,16 +40,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  credentials: true
+}))
 
 // Routes
 app.use("/playlists", playlists);
-app.use("/auth", auth);
+app.use("/auth", passport.authenticate("discord"), auth);
 
 // Init
 const port = app.get("port");

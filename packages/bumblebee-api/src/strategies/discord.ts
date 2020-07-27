@@ -4,7 +4,7 @@ import { User, IUser } from "../schemas/User";
 
 const useDiscordStategy = () => {
     passport.serializeUser((user: IUser, done) => {
-        done(null, user.discordId);
+        return done(null, user.discordId);
     })
 
     passport.deserializeUser(async (discordId, done) => {
@@ -13,9 +13,9 @@ const useDiscordStategy = () => {
                 discordId
             })
 
-            return user ? done(null, user) : done(null, null)
+            return user ? done(null, user) : done(null, null);
         } catch (err) {
-            done(err, null)
+            return done(err, null)
         }
     })
 
@@ -27,9 +27,9 @@ const useDiscordStategy = () => {
             scope: ["identify", "guilds"]
         },
             async (accessToken, refreshToken, profile, done) => {
-                const { id, avatar, discriminator, guilds, username } = profile;
-
                 try {
+                    const { id, avatar, discriminator, guilds, username } = profile;
+
                     const findUser = await User.findOneAndUpdate({
                         discordId: id
                     }, {

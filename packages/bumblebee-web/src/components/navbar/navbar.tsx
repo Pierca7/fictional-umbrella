@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 export interface NavbarItem {
   readonly displayName: string;
   readonly path: string;
+  readonly externalLink?: boolean;
 }
 
 export interface NavbarProps {
@@ -11,8 +12,8 @@ export interface NavbarProps {
   readonly items: ReadonlyArray<NavbarItem>;
 }
 
-const Navbar = (props: NavbarProps & { children?: React.ReactNode }) => {
-  const { items, brandItem, children } = props;
+const Navbar = (props: NavbarProps) => {
+  const { items, brandItem } = props;
 
   return (
     <nav className="flex w-full h-full p-4 bg-soft-berry">
@@ -27,13 +28,14 @@ const Navbar = (props: NavbarProps & { children?: React.ReactNode }) => {
         <div className="flex flex-row w-full justify-end">
           {items.map(item => (
             <li key={item.path} className="flex ml-4 justify-center self-center hover:text-winter-grey">
-              <Link to={item.path}>{item.displayName}</Link>
+              {item.externalLink ? (
+                <button onClick={() => window.location.href = item.path}>{item.displayName}</button>
+              ) : (
+                  <Link to={item.path}>{item.displayName}</Link>
+                )}
             </li>
           ))}
         </div>
-        {
-          children
-        }
       </ul>
     </nav>
   );

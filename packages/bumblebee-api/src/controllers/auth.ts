@@ -84,13 +84,22 @@ const router: Router = Router();
 //   });
 // });
 
-router.get("/discord", passport.authenticate("discord"), (req: Request, res: Response) => {
+router.get("/discord/redirect", (req: Request, res: Response) => {
+  res.redirect("http://localhost:3000/dashboard");
 })
 
-router.get("/discord/redirect",passport.authenticate("discord"), (req: Request, res: Response) => {
-  res.json({
-    "status": "UwU"
-  })
+router.get("/", (req: Request, res: Response) => {
+  console.log("Reached")
+
+  if (req.user) {
+    res.json(req.user)
+  } else {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({
+      code: HttpStatusCodes.UNAUTHORIZED,
+      message: "Unauthorized"
+    })
+  }
 })
+
 
 export default router;
