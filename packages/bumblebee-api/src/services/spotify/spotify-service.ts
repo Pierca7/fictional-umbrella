@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { spotifyTokenUrl, spotifyApiUrl } from "configuration/constants";
 import axios from "axios";
+import { spotifyTokenUrl, spotifyApiUrl } from "configuration/constants";
 import { SpotifyPlaylist } from "./models/playlist";
 
 export interface SpotifyToken {

@@ -10,13 +10,18 @@
         "root": [
           "./src"
         ],
+        "extensions": [
+          ".ts",
+          ".js",
+          ".json"
+        ],
         "alias": {
           "configuration": "./src/configuration",
           "controllers": "./src/controllers",
-          "middleware": "./src/middleware",
-          "models": "./src/models",
-          "services": "./src/services",
-          "types": "./src/types"
+          "data-access": "./src/data-access",
+          "data-objects": "./src/data-objects",
+          "schemas": "./src/schemas",
+          "services": "./src/services"
         }
       }
     ],

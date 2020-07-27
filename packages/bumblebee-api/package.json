@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rimraf ./lib && npm run build:js",
     "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
-    "start": "npm run build && node ./lib/src/server.js",
+    "start": "nodemon",
     "prettify": "prettier --write src/**/*.ts --config ../../.prettierrc.js"
   },
   "repository": {
@@ -42,6 +42,7 @@
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
+    "@babel/node": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",
@@ -55,7 +56,6 @@
     "@types/passport": "^1.0.3",
     "@types/passport-discord": "^0.1.3",
     "concurrently": "^4.1.0",
-    "nodemon": "^1.19.0",
-    "ts-node": "^8.10.2"
+    "nodemon": "^1.19.0"
   }
 }
