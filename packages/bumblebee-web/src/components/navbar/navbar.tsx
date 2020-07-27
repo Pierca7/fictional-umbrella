@@ -11,8 +11,8 @@ export interface NavbarProps {
   readonly items: ReadonlyArray<NavbarItem>;
 }
 
-const Navbar = (props: NavbarProps) => {
-  const { items, brandItem } = props;
+const Navbar = (props: NavbarProps & { children?: React.ReactNode }) => {
+  const { items, brandItem, children } = props;
 
   return (
     <nav className="flex w-full h-full p-4 bg-soft-berry">
@@ -31,6 +31,9 @@ const Navbar = (props: NavbarProps) => {
             </li>
           ))}
         </div>
+        {
+          children
+        }
       </ul>
     </nav>
   );

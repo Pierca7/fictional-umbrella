@@ -19,6 +19,7 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
+    "discord-oauth2": "^2.3.0",
     "eslint": "^7.0.0",
     "postcss-cli": "^7.1.1",
     "typescript": "~3.7.2"
