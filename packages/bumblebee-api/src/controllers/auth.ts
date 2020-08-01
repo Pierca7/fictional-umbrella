@@ -3,7 +3,7 @@ import { Router, Request, NextFunction, Response } from "express";
 import HttpStatusCodes from "http-status-codes";
 import { decrypt, encrypt, generateHash } from "../configuration/authUtils";
 import { param, body, validationResult } from "express-validator/check";
-import passport from "passport"
+import passport from "passport";
 
 const users = new Map();
 
@@ -84,22 +84,10 @@ const router: Router = Router();
 //   });
 // });
 
-router.get("/discord/redirect", (req: Request, res: Response) => {
+router.get("/login", passport.authenticate("discord"));
+
+router.get("/discord/redirect", passport.authenticate("discord", { failureRedirect: "http://localhost:3000/" }), (req: Request, res: Response) => {
   res.redirect("http://localhost:3000/dashboard");
-})
-
-router.get("/", (req: Request, res: Response) => {
-  console.log("Reached")
-
-  if (req.user) {
-    res.json(req.user)
-  } else {
-    res.status(HttpStatusCodes.UNAUTHORIZED).json({
-      code: HttpStatusCodes.UNAUTHORIZED,
-      message: "Unauthorized"
-    })
-  }
-})
-
+});
 
 export default router;

@@ -23,9 +23,9 @@ const routes: ReadonlyArray<NavbarItem> = [
   },
   {
     displayName: "Log in",
-    path: "http://localhost:5000/auth",
-    externalLink: true
-  }
+    path: "http://localhost:5000/auth/login",
+    externalLink: true,
+  },
 ];
 
 function App() {
