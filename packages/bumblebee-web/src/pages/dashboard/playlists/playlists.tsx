@@ -6,13 +6,12 @@ import ActionButton from "../../../components/action-button/action-button";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Playlists = () => {
-  const userId = "";
   const [playlists, setPlaylists] = useState<ReadonlyArray<Playlist>>([]);
   const history = useHistory();
   const match = useRouteMatch();
 
   useEffect(() => {
-    getPlaylistsByUser(userId)
+    getPlaylistsByUser()
       .then(playlists => setPlaylists(playlists))
       .catch(err => console.error(err));
   }, []);
@@ -25,11 +24,11 @@ const Playlists = () => {
       </div>
       <div className="flex flex-row flex-wrap m-4">
         {playlists.map((playlist: Playlist) => {
-          const { id, name, owner, thumbnail } = playlist;
+          const { _id, name, owner, thumbnail } = playlist;
 
           return (
-            <div key={id} className="flex m-4 sm:12/12 md:w-6/12 lg:w-4/12 xl:w-2/12">
-              <Card owner={owner} title={name} image={thumbnail} onClick={() => history.push(`${match.url}/${id}`)} />
+            <div key={_id} className="flex m-4 sm:12/12 md:w-6/12 lg:w-4/12 xl:w-2/12">
+              <Card owner={owner} title={name} image={thumbnail} onClick={() => history.push(`${match.url}/${_id}`)} />
             </div>
           );
         })}

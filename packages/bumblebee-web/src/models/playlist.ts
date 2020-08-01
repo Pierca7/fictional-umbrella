@@ -4,6 +4,7 @@ export enum Providers {
 }
 
 export interface Song {
+  readonly id: string;
   readonly length: number;
   readonly name: string;
   readonly thumbnail: string;
@@ -11,7 +12,7 @@ export interface Song {
 }
 
 export interface Playlist {
-  readonly id: string;
+  readonly _id: string;
   readonly length: number;
   readonly name: string;
   readonly owner: string;
