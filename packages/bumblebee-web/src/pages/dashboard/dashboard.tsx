@@ -22,9 +22,20 @@ const Dashboard = () => {
   const match = useRouteMatch();
   const [user, setUser] = useState();
 
-  console.log(user);
+  console.log(user)
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("x-access-token") && params.has("x-access-token-expiration")) {
+      const token = decodeURI(params.get("x-access-token") as string);
+      const expirationTime = params.get("x-access-token-expiration") as string;
+
+      window.location.search = "";
+
+      localStorage.setItem("x-access-token", token);
+      localStorage.setItem("x-access-token=expiration", expirationTime);
+    }
+
     getUserDetails().then(user => setUser(user));
   }, [])
 

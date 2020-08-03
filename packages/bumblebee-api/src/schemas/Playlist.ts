@@ -1,4 +1,4 @@
-import { Document, Model, model, Schema } from "mongoose";
+import { Document, Model, model, Schema, Types } from "mongoose";
 import { SongDTO, Providers, PlaylistDTO } from "../data-objects/playlist";
 
 export interface ISong extends SongDTO, Document {}
@@ -40,7 +40,7 @@ const PlaylistSchema: Schema = new Schema({
     required: true,
   },
   owner: {
-    type: String,
+    type: Types.ObjectId,
     required: true,
   },
   provider: {

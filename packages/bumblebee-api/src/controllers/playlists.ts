@@ -4,6 +4,7 @@ import { check, validationResult } from "express-validator/check";
 import { Providers, PlaylistDTO } from "../data-objects/playlist";
 import HttpStatusCodes from "http-status-codes";
 import PlaylistManager from "../data-access/playlists";
+import { getUserId } from "configuration/authUtils";
 
 const providers = Object.values(Providers);
 // eslint-disable-next-line new-cap
@@ -32,7 +33,7 @@ router.post(
     try {
       const playlistDto = await PlaylistDTO.createFromSpotify(req.body.url, String(Math.random()), req.body.name);
 
-      const playlist = await PlaylistManager.create(playlistDto);
+      const playlist = await PlaylistManager.create(playlistDto, getUserId(req));
 
       res.json(playlist);
     } catch (err) {
@@ -40,7 +41,7 @@ router.post(
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
       return;
     }
-  }
+  },
 );
 
 /**
@@ -48,15 +49,15 @@ router.post(
  */
 router.get(
   "/",
-  async (_req: Request, res: Response): Promise<void> => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
-      const playlists = await PlaylistManager.getAll();
+      const playlists = await PlaylistManager.getAll(getUserId(req));
 
       res.json(playlists);
     } catch (err) {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
-  }
+  },
 );
 
 /**
@@ -68,13 +69,13 @@ router.get(
     try {
       const playlistId = ((req || {}).params || {}).id;
 
-      if (!playlistId || isNaN(parseInt(playlistId, 10))) {
-        res.status(HttpStatusCodes.BAD_REQUEST).json({ msg: "Your ID is invalid. Please use an integer number." });
+      if (!playlistId) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({ msg: "Your ID is invalid." });
 
         return;
       }
 
-      const playlist = await PlaylistManager.getById(playlistId);
+      const playlist = await PlaylistManager.getById(playlistId, getUserId(req));
 
       if (!playlist) {
         res.status(HttpStatusCodes.NOT_FOUND).json({ msg: "Playlist not found" });
@@ -86,7 +87,7 @@ router.get(
     } catch (err) {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
-  }
+  },
 );
 
 /**
@@ -98,13 +99,13 @@ router.delete(
     try {
       const playlistId = ((req || {}).params || {}).id;
 
-      if (!playlistId || isNaN(parseInt(playlistId, 10))) {
-        res.status(HttpStatusCodes.BAD_REQUEST).json({ msg: "Your ID is invalid. Please use an integer number." });
+      if (!playlistId) {
+        res.status(HttpStatusCodes.BAD_REQUEST).json({ msg: "Your ID is invalid." });
 
         return;
       }
 
-      await PlaylistManager.deleteById(playlistId);
+      await PlaylistManager.deleteById(playlistId, getUserId(req));
 
       res.status(HttpStatusCodes.NO_CONTENT).json({ msg: "Playlist removed" });
     } catch (err) {

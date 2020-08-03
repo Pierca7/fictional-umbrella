@@ -1,4 +1,7 @@
 import crypto from "crypto";
+import HttpStatusCodes from "http-status-codes";
+import { Response, Request, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 
 const algorithm = "aes-192-cbc";
 
@@ -29,3 +32,20 @@ export const decrypt = (str: string) => {
 };
 
 export const generateHash = () => crypto.randomBytes(20).toString("hex");
+
+export const checkAuthentication = (req: Request, res: Response, next: NextFunction) => {
+  jwt.verify((req.headers as any)["x-access-token"], process.env.SESSION_SECRET, (err: any, decoded: any) => {
+    if (err) {
+      return res.status(HttpStatusCodes.UNAUTHORIZED).json({
+        code: HttpStatusCodes.UNAUTHORIZED,
+        message: "Unauthorized",
+      });
+    }
+
+    (req as any).userId = decoded.id;
+
+    return next();
+  });
+};
+
+export const getUserId = (req: Request): string => ((req as any).userId as string);
