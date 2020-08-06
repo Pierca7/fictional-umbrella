@@ -7,7 +7,8 @@
     "build": "rimraf ./lib && npm run build:js",
     "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
     "start": "npm run build && node ./lib/src/index.js",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "lint": "eslint --fix"
   },
   "repository": "git+https://github.com/Pierca7/fictional-umbrella.git",
   "keywords": [],

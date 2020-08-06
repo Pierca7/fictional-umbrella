@@ -31,7 +31,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prestart": "npm run build:css",
-    "build:css": "postcss src/styles/tailwind.scss -o src/styles/index.scss"
+    "build:css": "postcss src/styles/tailwind.scss -o src/styles/index.scss",
+    "lint": "eslint --fix"
   },
   "browserslist": {
     "production": [

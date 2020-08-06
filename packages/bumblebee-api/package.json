@@ -6,7 +6,8 @@
     "build": "rimraf ./lib && npm run build:js",
     "build:js": "babel src --out-dir lib/src --extensions \".ts,.js\" --source-maps inline",
     "start": "nodemon",
-    "prettify": "prettier --write src/**/*.ts --config ../../.prettierrc.js"
+    "prettify": "prettier --write src/**/*.ts --config ../../.prettierrc.js",
+    "lint": "eslint --fix"
   },
   "repository": {
     "type": "git",
