@@ -1,7 +1,7 @@
-interface Author {
+interface YoutubeAuthor {
   readonly name: string;
   readonly ref: string;
   readonly verified: boolean;
 }
 
-export default Author;
+export default YoutubeAuthor;

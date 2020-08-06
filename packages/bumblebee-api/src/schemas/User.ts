@@ -1,7 +1,7 @@
 import { Schema, Model, Document, model } from "mongoose";
-import { UserDTO } from "../data-objects/user";
+import { NewUser } from "../data-objects/user";
 
-export interface IUser extends Document, UserDTO { }
+export interface UserDocument extends Document, NewUser {}
 
 const UserSchema: Schema = new Schema({
   discordId: {
@@ -21,6 +21,6 @@ const UserSchema: Schema = new Schema({
     type: Array,
     required: true,
   },
-})
+});
 
-export const User: Model<IUser> = model("User", UserSchema);
+export const UserModel: Model<UserDocument> = model("User", UserSchema);

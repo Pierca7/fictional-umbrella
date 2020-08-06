@@ -1,11 +1,11 @@
-import EContentType from "./EContentType";
+import EYoutubeContentType from "./EContentType";
 
-interface Mix {
-  readonly type: EContentType.Mix;
+interface YoutubeMix {
+  readonly type: EYoutubeContentType.Mix;
   readonly title: string;
   readonly firstItem: string;
   readonly thumbnail: string;
   readonly length: number;
 }
 
-export default Mix;
+export default YoutubeMix;

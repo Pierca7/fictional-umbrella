@@ -1,13 +1,13 @@
-import Movie from "./models/Movie";
-import Channel from "./models/Channel";
-import Mix from "./models/Mix";
-import Video from "./models/Video";
-import Playlist from "./models/Playlist";
-import { EContentTypeFilter } from "./models/EContentType";
+import YoutubeMovie from "./models/Movie";
+import YoutubeChannel from "./models/Channel";
+import YoutubeMix from "./models/Mix";
+import YoutubeVideo from "./models/Video";
+import YoutubePlaylist from "./models/Playlist";
+import { EYoutubeContentTypeFilter } from "./models/EContentType";
 
 const ytsr = require("ytsr");
 
-export type YoutubeContentArray = Array<Movie | Channel | Mix | Video | Playlist>;
+export type YoutubeContentArray = Array<YoutubeMovie | YoutubeChannel | YoutubeMix | YoutubeVideo | YoutubePlaylist>;
 
 export interface Filter {
   readonly ref?: string;
@@ -30,15 +30,15 @@ export interface SearchResult {
 }
 
 abstract class YoutubeService {
-  public static async searchVideo(query: string): Promise<Video[]> {
-    return this._search(query, EContentTypeFilter.Video) as Promise<Video[]>;
+  public static async searchVideo(query: string): Promise<YoutubeVideo[]> {
+    return this._search(query, EYoutubeContentTypeFilter.Video) as Promise<YoutubeVideo[]>;
   }
 
-  public static async searchPlaylist(query: string): Promise<Playlist[]> {
-    return this._search(query, EContentTypeFilter.Playlist) as Promise<Playlist[]>;
+  public static async searchPlaylist(query: string): Promise<YoutubePlaylist[]> {
+    return this._search(query, EYoutubeContentTypeFilter.Playlist) as Promise<YoutubePlaylist[]>;
   }
 
-  private static async _search(query: string, type: EContentTypeFilter, limit: number = 5): Promise<YoutubeContentArray> {
+  private static async _search(query: string, type: EYoutubeContentTypeFilter, limit: number = 5): Promise<YoutubeContentArray> {
     return new Promise((resolve, reject) => {
       let filter: Filter;
 

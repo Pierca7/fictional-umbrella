@@ -1,7 +1,7 @@
-import EContentType from "./EContentType";
+import EYoutubeContentType from "./EContentType";
 
-interface Channel {
-  readonly type: EContentType.Channel;
+interface YoutubeChannel {
+  readonly type: EYoutubeContentType.Channel;
   readonly channel_id: string;
   readonly name: string;
   readonly link: string;
@@ -12,4 +12,4 @@ interface Channel {
   readonly videos: number;
 }
 
-export default Channel;
+export default YoutubeChannel;

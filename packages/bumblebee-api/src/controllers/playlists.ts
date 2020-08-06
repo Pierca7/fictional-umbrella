@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { Router, Response, Request } from "express";
-import { check, validationResult } from "express-validator/check";
-import { Providers, PlaylistDTO } from "../data-objects/playlist";
+import { validationResult, body } from "express-validator/check";
+import { Providers, PlaylistFactory } from "../data-objects/playlist";
 import HttpStatusCodes from "http-status-codes";
 import PlaylistManager from "../data-access/playlists";
 import { getUserId } from "configuration/authUtils";
@@ -16,10 +16,10 @@ const router: Router = Router();
 router.post(
   "/",
   [
-    check("url", "The URL of the playlist is required").not().isEmpty(),
-    check("url", "Invalid url. Please check the format of your input").isURL(),
-    check("provider", "The provider of playlist is required").not().isEmpty(),
-    check("provider", `Invalid value. The allowed values are: ${providers.join(", ")}.`).isIn(providers),
+    body("sources", "The sources of the playlist are required").not().isEmpty(),
+    body("sources.*.url", "Each playlist source must have an URL").not().isEmpty(),
+    body("sources.*.provider", "Each playlist source must have a provider").not().isEmpty(),
+    body("sources.*.provider", `The playlist provider must be either ${providers[0]} or ${providers[1]}`).isIn(providers),
   ],
   async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);
@@ -31,9 +31,7 @@ router.post(
     }
 
     try {
-      const playlistDto = await PlaylistDTO.createFromSpotify(req.body.url, String(Math.random()), req.body.name);
-
-      const playlist = await PlaylistManager.create(playlistDto, getUserId(req));
+      const playlist = await PlaylistFactory.createFromSpotify(req.body.sources[0].url, getUserId(req), req.body.name);
 
       res.json(playlist);
     } catch (err) {
@@ -41,7 +39,7 @@ router.post(
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
       return;
     }
-  },
+  }
 );
 
 /**
@@ -57,7 +55,7 @@ router.get(
     } catch (err) {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
-  },
+  }
 );
 
 /**
@@ -87,7 +85,7 @@ router.get(
     } catch (err) {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
-  },
+  }
 );
 
 /**

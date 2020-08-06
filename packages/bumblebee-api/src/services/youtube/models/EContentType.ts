@@ -1,4 +1,4 @@
-enum EContentType {
+enum EYoutubeContentType {
   Playlist = "playlist",
   Channel = "channel",
   Video = "video",
@@ -6,7 +6,7 @@ enum EContentType {
   Mix = "mix",
 }
 
-export enum EContentTypeFilter {
+export enum EYoutubeContentTypeFilter {
   Playlist = "Playlist",
   Channel = "Channel",
   Video = "Video",
@@ -14,4 +14,4 @@ export enum EContentTypeFilter {
   Show = "Show",
 }
 
-export default EContentType;
+export default EYoutubeContentType;

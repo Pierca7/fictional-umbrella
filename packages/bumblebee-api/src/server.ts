@@ -7,7 +7,7 @@ import express from "express";
 import connectDB from "configuration/database";
 import playlists from "controllers/playlists";
 import auth from "controllers/auth";
-import user from "controllers/user";
+import users from "controllers/users";
 import useDiscordStategy from "./strategies/discord";
 import passport from "passport";
 import cors from "cors";
@@ -30,12 +30,12 @@ app.use(
   cors({
     origin: ["http://localhost:3000"],
     credentials: true,
-  }),
+  })
 );
 
 // Routes
 app.use("/playlists", checkAuthentication, playlists);
-app.use("/user", checkAuthentication, user);
+app.use("/users", checkAuthentication, users);
 app.use("/auth", auth);
 
 // Init

@@ -1,15 +1,16 @@
 import passport from "passport";
 import DiscordStrategy from "passport-discord";
-import { User, IUser } from "../schemas/User";
+import { UserModel, UserDocument } from "../schemas/User";
+import UserManager from "../data-access/users";
 
 const useDiscordStategy = () => {
-  passport.serializeUser((user: IUser, done) => {
+  passport.serializeUser((user: UserDocument, done) => {
     return done(null, user.discordId);
   });
 
   passport.deserializeUser(async (discordId, done) => {
     try {
-      const user = await User.findOne({
+      const user = await UserModel.findOne({
         discordId,
       });
 
@@ -20,43 +21,30 @@ const useDiscordStategy = () => {
   });
 
   passport.use(
-    new DiscordStrategy({
-      clientID: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET,
-      callbackURL: "http://localhost:5000/auth/discord/redirect",
-      scope: ["identify", "guilds"],
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const { id, avatar, discriminator, guilds, username } = profile;
+    new DiscordStrategy(
+      {
+        clientID: process.env.DISCORD_CLIENT_ID,
+        clientSecret: process.env.DISCORD_CLIENT_SECRET,
+        callbackURL: "http://localhost:5000/auth/discord/redirect",
+        scope: ["identify", "guilds"],
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const { id, avatar, discriminator, guilds, username } = profile;
 
-        const findUser = await User.findOneAndUpdate({
-          discordId: id,
-        }, {
-          discordTag: `${username}#${discriminator}`,
-          avatar,
-          guilds,
-        },
-        {
-          new: true,
-        });
+          const user = await UserManager.createOrUpdateUser({
+            avatar: avatar,
+            discordId: id,
+            discordTag: `${username}#${discriminator}`,
+            guilds: guilds,
+          });
 
-        if (findUser) {
-          return done(null, findUser);
+          return done(null, user);
+        } catch (err) {
+          return done(err, null);
         }
-
-        const newUser = await User.create({
-          discordId: id,
-          discordTag: `${username}#${discriminator}`,
-          avatar,
-          guilds,
-        });
-
-        return done(null, newUser);
-      } catch (err) {
-        return done(err, null);
       }
-    }),
+    )
   );
 };
 

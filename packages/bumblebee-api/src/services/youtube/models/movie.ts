@@ -1,12 +1,12 @@
-import EContentType from "./EContentType";
-import Author from "./Author";
+import EYoutubeContentType from "./EContentType";
+import YoutubeAuthor from "./Author";
 
-interface Movie {
-  readonly type: EContentType.Movie;
+interface YoutubeMovie {
+  readonly type: EYoutubeContentType.Movie;
   readonly title: string;
   readonly link: string;
   readonly thumbnail: string;
-  readonly author: Author;
+  readonly author: YoutubeAuthor;
   readonly description: string;
   readonly meta: ReadonlyArray<string>;
   readonly duration: number;
@@ -14,4 +14,4 @@ interface Movie {
   readonly actors: ReadonlyArray<string>;
 }
 
-export default Movie;
+export default YoutubeMovie;

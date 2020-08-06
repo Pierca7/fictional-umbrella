@@ -1,13 +1,13 @@
-import EContentType from "./EContentType";
-import Author from "./Author";
+import EYoutubeContentType from "./EContentType";
+import YoutubeAuthor from "./Author";
 
-interface Playlist {
-  readonly type: EContentType.Playlist;
-  readonly title: string;
+interface YoutubePlaylist {
+  readonly type: EYoutubeContentType.Playlist;
+  readonly name: string;
   readonly link: string;
   readonly thumbnail: string;
-  readonly author: Author;
+  readonly author: YoutubeAuthor;
   readonly length: number;
 }
 
-export default Playlist;
+export default YoutubePlaylist;

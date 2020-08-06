@@ -1,12 +1,14 @@
 import SpotifyService from "../services/spotify/spotify-service";
 import YoutubeService from "../services/youtube/youtube-service";
+import PlaylistManager from "../data-access/playlists";
+import { SpotifyPlaylist } from "services/spotify/models/playlist";
 
 export enum Providers {
   Youtube = "youtube",
   Spotify = "spotify",
 }
 
-export interface SongDTO {
+export interface Song {
   length: number;
   name: string;
   originUrl: string;
@@ -14,14 +16,23 @@ export interface SongDTO {
   url: string;
 }
 
-export interface PlaylistDTO {
+export interface Source {
+  readonly provider: Providers;
+  readonly url: string;
+}
+
+export interface NewPlaylist {
   length: number;
   name: string;
   owner: string;
-  provider: Providers;
   thumbnail: string;
-  songs: Array<SongDTO>;
-  url: string;
+  sources: Array<Source>;
+  songs: Array<Song>;
+  lastUpdated: string;
+}
+
+export interface Playlist extends NewPlaylist {
+  readonly id: string;
 }
 
 const parseLength = (string: string): number => {
@@ -38,24 +49,38 @@ const parseLength = (string: string): number => {
   return parseInt(parsedLength[0], 10) * 60 + parseInt(parsedLength[1], 10);
 };
 
-export class PlaylistDTO implements PlaylistDTO {
-  protected constructor(data: PlaylistDTO) {
-    const { length, name, owner, provider, songs, url, thumbnail } = data;
+export class PlaylistFactory {
+  public static async createFromSpotify(url: string, owner: string, name?: string): Promise<Playlist> {
+    const spotifyPlaylistId = url.split("/").pop();
+    const spotifyPlaylist = await SpotifyService.getPlaylist(spotifyPlaylistId);
 
-    this.length = length;
-    this.name = name;
-    this.owner = owner;
-    this.provider = provider;
-    this.songs = songs;
-    this.url = url;
-    this.thumbnail = thumbnail;
+    const songs = await this._mapSpotifySongs(spotifyPlaylist);
+
+    const newPlaylist: NewPlaylist = {
+      length: spotifyPlaylist.tracks.total,
+      name: name || spotifyPlaylist.name,
+      owner: owner,
+      sources: [
+        {
+          provider: Providers.Spotify,
+          url: spotifyPlaylist.href,
+        },
+      ],
+      songs: songs,
+      thumbnail: spotifyPlaylist.images[0].url,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const playlistDocument = await PlaylistManager.create(newPlaylist);
+
+    return {
+      id: playlistDocument._id,
+      ...newPlaylist,
+    };
   }
 
-  public static async createFromSpotify(url: string, owner: string, name?: string): Promise<PlaylistDTO> {
-    const playlistId = url.split("/").pop();
-    const playlist = await SpotifyService.getPlaylist(playlistId);
-
-    const songPromises = playlist.tracks.items.map(async item => {
+  private static async _mapSpotifySongs(spotifyPlaylist: SpotifyPlaylist): Promise<Array<Song>> {
+    const songPromises = spotifyPlaylist.tracks.items.map(async item => {
       const artistNames = item.track.artists.map(artist => artist.name).join(" ");
       const query = `${item.track.name} ${artistNames}`;
 
@@ -63,6 +88,7 @@ export class PlaylistDTO implements PlaylistDTO {
 
       return {
         ...video[0],
+        originUrl: item.track.href,
         originArtists: item.track.artists,
         originThumbnail: item.track.album.images[0].url,
       };
@@ -71,25 +97,15 @@ export class PlaylistDTO implements PlaylistDTO {
     const possibleSongs = await Promise.all(songPromises);
 
     // Take the first of the videos returned by Youtube and map them to the common interface
-    const songs = possibleSongs.map(
+    return possibleSongs.map(
       video =>
         ({
           length: parseLength(video.duration),
           name: video.title,
-          originUrl: url,
           thumbnail: video.originThumbnail,
           url: video.link,
-        } as SongDTO)
+          originUrl: video.originUrl,
+        } as Song)
     );
-
-    return new PlaylistDTO({
-      length: playlist.tracks.total,
-      name: name || playlist.name,
-      owner: owner,
-      provider: Providers.Spotify,
-      songs: songs,
-      url: playlist.uri,
-      thumbnail: playlist.images[0].url,
-    });
   }
 }
