@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Switch, Route } from "react-router-dom";
 import Sidebar, { SidebarItem } from "../../components/sidebar/sidebar";
 import { useRouteMatch } from "react-router-dom";
 import Guilds from "./guilds/guilds";
 import Playlists from "./playlists/playlists";
 import Playlist from "./playlists/playlist/playlist";
+import { useUserContext, UserActionTypes } from "../../state/userContext";
 import { getUserDetails } from "../../services/user-service";
 
 const routes: ReadonlyArray<SidebarItem> = [
@@ -15,29 +16,56 @@ const routes: ReadonlyArray<SidebarItem> = [
   {
     displayName: "Guilds",
     path: "/guilds",
-  }
+  },
 ];
+
+const isAuthenticated = () => !!(localStorage.getItem("x-access-token") && localStorage.getItem("x-access-token-expiration"));
+const searchToken = () => {
+  const params = new URLSearchParams(window.location.search);
+  const hasToken = (params.has("x-access-token") && params.has("x-access-token-expiration")) || !!(localStorage.getItem("x-access-token") && localStorage.getItem("x-access-token-expiration"));
+
+  if (hasToken) {
+    const token = decodeURI(params.get("x-access-token") as string);
+    const expirationTime = params.get("x-access-token-expiration") as string;
+
+    window.location.search = "";
+
+    localStorage.setItem("x-access-token", token);
+    localStorage.setItem("x-access-token-expiration", expirationTime);
+  }
+
+  return hasToken;
+};
 
 const Dashboard = () => {
   const match = useRouteMatch();
-  const [user, setUser] = useState();
-
-  console.log(user)
+  const [authenticated, setAuthenticated] = useState(isAuthenticated());
+  const { userState, setUserState } = useUserContext();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has("x-access-token") && params.has("x-access-token-expiration")) {
-      const token = decodeURI(params.get("x-access-token") as string);
-      const expirationTime = params.get("x-access-token-expiration") as string;
+    if (!authenticated) {
+      const hasToken = searchToken();
 
-      window.location.search = "";
-
-      localStorage.setItem("x-access-token", token);
-      localStorage.setItem("x-access-token=expiration", expirationTime);
+      if (hasToken) {
+        setAuthenticated(true);
+      } else {
+        window.location.href = "http://localhost:5000/auth/login";
+      }
     }
 
-    getUserDetails().then(user => setUser(user));
-  }, [])
+    if (authenticated && !userState.loading) {
+      setUserState({
+        type: UserActionTypes.FetchUserStarted,
+      });
+
+      getUserDetails().then(user =>
+        setUserState({
+          type: UserActionTypes.FetchUserFinished,
+          data: user,
+        })
+      );
+    }
+  }, []);
 
   return (
     <section className="flex flex-row w-full">

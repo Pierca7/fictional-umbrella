@@ -6,6 +6,7 @@ import Docs from "./pages/docs/docs";
 import Dashboard from "./pages/dashboard/dashboard";
 
 import "./App.scss";
+import { UserContext } from "./state/userContext";
 
 const homeRoute: NavbarItem = {
   displayName: "BUMBLEBEE",
@@ -44,7 +45,9 @@ function App() {
               <Docs />
             </Route>
             <Route className="h-full flex" path="/dashboard">
-              <Dashboard />
+              <UserContext>
+                <Dashboard />
+              </UserContext>
             </Route>
           </Switch>
         </div>

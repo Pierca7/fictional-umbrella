@@ -27,6 +27,7 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.2.2",
     "fluent-ffmpeg": "^2.1.2",
+    "redis": "^3.0.2",
     "regenerator-runtime": "^0.13.5",
     "websocket-stream": "^5.5.2",
     "ytdl-core": "^2.1.7"

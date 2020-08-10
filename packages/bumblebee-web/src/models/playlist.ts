@@ -4,20 +4,28 @@ export enum Providers {
 }
 
 export interface Song {
-  readonly id: string;
   readonly length: number;
-  readonly name: string;
-  readonly thumbnail: string;
+  readonly originUrl: string;
+  name: string;
+  thumbnail: string;
+  url: string;
+}
+
+export interface Source {
+  readonly provider: Providers;
   readonly url: string;
 }
 
-export interface Playlist {
-  readonly _id: string;
+export interface NewPlaylist {
   readonly length: number;
-  readonly name: string;
   readonly owner: string;
-  readonly provider: Providers;
+  readonly sources: Array<Source>;
+  readonly lastUpdated: string;
   readonly songs: Array<Song>;
-  readonly thumbnail: string;
-  readonly url: string;
+  name: string;
+  thumbnail: string;
+}
+
+export interface Playlist extends NewPlaylist {
+  readonly id: string;
 }
