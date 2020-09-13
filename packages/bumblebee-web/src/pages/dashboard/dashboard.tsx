@@ -5,7 +5,6 @@ import { useRouteMatch } from "react-router-dom";
 import Guilds from "./guilds/guilds";
 import Playlists from "./playlists/playlists";
 import Playlist from "./playlists/playlist/playlist";
-import { useUserContext, UserActionTypes } from "../../state/userContext";
 import { getUserDetails } from "../../services/user-service";
 
 const routes: ReadonlyArray<SidebarItem> = [
@@ -39,33 +38,6 @@ const searchToken = () => {
 
 const Dashboard = () => {
   const match = useRouteMatch();
-  const [authenticated, setAuthenticated] = useState(isAuthenticated());
-  const { userState, setUserState } = useUserContext();
-
-  useEffect(() => {
-    if (!authenticated) {
-      const hasToken = searchToken();
-
-      if (hasToken) {
-        setAuthenticated(true);
-      } else {
-        window.location.href = "http://localhost:5000/auth/login";
-      }
-    }
-
-    if (authenticated && !userState.loading) {
-      setUserState({
-        type: UserActionTypes.FetchUserStarted,
-      });
-
-      getUserDetails().then(user =>
-        setUserState({
-          type: UserActionTypes.FetchUserFinished,
-          data: user,
-        })
-      );
-    }
-  }, []);
 
   return (
     <section className="flex flex-row w-full">

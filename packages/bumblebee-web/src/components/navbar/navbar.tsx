@@ -1,40 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export interface NavbarItem {
-  readonly displayName: string;
-  readonly path: string;
-  readonly externalLink?: boolean;
-}
+const logout = () => {
+  localStorage.removeItem("x-access-token")
+  localStorage.removeItem("x-access-token-expiration")
 
-export interface NavbarProps {
-  readonly brandItem?: NavbarItem;
-  readonly items: ReadonlyArray<NavbarItem>;
-}
+  window.location.href = "http://localhost:3000";
+};
 
-const Navbar = (props: NavbarProps) => {
-  const { items, brandItem } = props;
+const login = () => {
+  window.location.href = "http://localhost:5000/auth/login";
+};
 
+const Navbar = () => {
   return (
     <nav className="flex w-full h-full p-4 bg-soft-berry">
       <ul className="flex flex-row w-full">
         <div className="flex flex-row w-full justify-start">
-          {brandItem && (
-            <li key={brandItem.path} className="flex justify-center self-center hover:text-winter-grey">
-              <Link to={brandItem.path}>{brandItem.displayName}</Link>
-            </li>
-          )}
+          <li className="flex justify-center self-center hover:text-winter-grey">
+            <Link to="/">BUMBLEBEE</Link>
+          </li>
         </div>
         <div className="flex flex-row w-full justify-end">
-          {items.map(item => (
-            <li key={item.path} className="flex ml-4 justify-center self-center hover:text-winter-grey">
-              {item.externalLink ? (
-                <button onClick={() => window.location.href = item.path}>{item.displayName}</button>
+          <li className="flex ml-4 justify-center self-center hover:text-winter-grey">
+            <Link to="/docs">Docs</Link>
+          </li>
+          <li className="flex ml-4 justify-center self-center hover:text-winter-grey">
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+          <li className="flex ml-4 justify-center self-center hover:text-winter-grey">
+            {
+              false ? (
+                <a onClick={logout}>Log out</a>
               ) : (
-                  <Link to={item.path}>{item.displayName}</Link>
-                )}
-            </li>
-          ))}
+                <a onClick={login}>Log in</a>
+              )
+            }
+          </li>
         </div>
       </ul>
     </nav>
